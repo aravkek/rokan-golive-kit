@@ -15,12 +15,36 @@
       "label": "EHR & practice management"
     },
     {
+      "id": "specialty",
+      "label": "Dermatology & ophthalmology EHR"
+    },
+    {
+      "id": "pharmacy",
+      "label": "Pharmacy systems"
+    },
+    {
+      "id": "ltc",
+      "label": "Long-term care EHR"
+    },
+    {
       "id": "emr-ca",
       "label": "Canadian clinic EMR"
     },
     {
       "id": "erp",
       "label": "ERP & accounting"
+    },
+    {
+      "id": "distribution",
+      "label": "Distribution ERP"
+    },
+    {
+      "id": "dms",
+      "label": "Auto dealer DMS"
+    },
+    {
+      "id": "tms",
+      "label": "Freight TMS & dock scheduling"
     },
     {
       "id": "ticketing",
@@ -35,6 +59,18 @@
       "label": "Payments & claims"
     },
     {
+      "id": "core",
+      "label": "Credit union core"
+    },
+    {
+      "id": "grc",
+      "label": "Bank GRC"
+    },
+    {
+      "id": "mortgage",
+      "label": "Mortgage origination"
+    },
+    {
       "id": "identity",
       "label": "Identity & access"
     },
@@ -43,8 +79,28 @@
       "label": "Property management"
     },
     {
+      "id": "hotel",
+      "label": "Hotel property management"
+    },
+    {
       "id": "recruiting",
       "label": "Recruiting & HR"
+    },
+    {
+      "id": "legal",
+      "label": "Legal practice & billing"
+    },
+    {
+      "id": "work",
+      "label": "Project & work management"
+    },
+    {
+      "id": "gis",
+      "label": "GIS & mapping"
+    },
+    {
+      "id": "permitting",
+      "label": "Government permitting & licensing"
     },
     {
       "id": "commerce",
@@ -53,6 +109,18 @@
     {
       "id": "insurance",
       "label": "Insurance agency management"
+    },
+    {
+      "id": "carrier",
+      "label": "Insurance carrier core"
+    },
+    {
+      "id": "screening",
+      "label": "Background screening"
+    },
+    {
+      "id": "vet",
+      "label": "Veterinary practice management"
     },
     {
       "id": "legacy",
@@ -457,6 +525,82 @@
       }
     },
     {
+      "id": "brightree",
+      "group": "ehr",
+      "name": "Brightree (ResMed)",
+      "level": "high",
+      "approval": "partner",
+      "access": "Brightree Web Services API (SOAP), bought by the supplier as a module on its Brightree order form. There is no public developer portal. Brightree’s contract bars third-party access without its written authorization, so an outside vendor applies through Brightree’s integrated vendor program and Brightree issues the credentials.",
+      "sandbox": "Brightree’s API services include environment setup, an orientation and a pre-production technical review. No self-serve sandbox is published; confirm what test environment you get.",
+      "limits": "Message size and transaction count limits are set by Brightree and not published. Confirm with Brightree.",
+      "blockers": [
+        "The supplier’s contract forbids third-party access without Brightree’s written authorization, so the agent can’t use the supplier’s logins or API access until that approval exists.",
+        "Brightree reviews vendor applications and publishes no criteria, timeline or fee. Confirm them early.",
+        "The API module carries a system integration fee that isn’t published, and use beyond the approved purpose can end access.",
+        "Writes match records on Brightree keys, so loose patient matching creates duplicate patients and orders."
+      ],
+      "request": "Whether the supplier has the Web Services API module, Brightree’s written approval for your access, the branches in scope, a restricted user for your agent, and a BAA with the supplier.",
+      "check": "Orders land on the existing patient with the right branch, payer, ordering clinician and items, and no duplicate patient is created.",
+      "risk": {
+        "id": "brightree-vendor-auth",
+        "title": "Brightree must authorize third-party access",
+        "detail": "Brightree’s contract bars third parties from the system without its written approval, and API work done under a supplier’s license can’t be shared with outside parties.",
+        "mitigation": "Apply as a Brightree integrated vendor in week 1 and get written authorization before production. Until then, deliver documents that staff enter into Brightree.",
+        "impact": 3,
+        "likelihood": 3
+      }
+    },
+    {
+      "id": "advancedmd",
+      "group": "ehr",
+      "name": "AdvancedMD",
+      "level": "medium",
+      "approval": "partner",
+      "access": "AdvancedMD Connect APIs (XML-RPC and REST) for read and write, under a paid Certified API Developer Agreement; production credentials follow a demo to AdvancedMD’s interoperability team. A certified FHIR R4 API with SMART on FHIR OAuth is read-only. Each practice buys an API Connect Agreement before AdvancedMD issues live credentials for its office.",
+      "sandbox": "A demo office with credentials and documentation after the developer agreement is signed, usually within 24 hours of the request. No real patient data.",
+      "limits": "Not published. Confirm with AdvancedMD how it throttles calls per office.",
+      "blockers": [
+        "The developer agreement has licensing and support fees that aren’t published, and production credentials wait on a successful demo.",
+        "Every practice must buy an API Connect Agreement before its live credentials are issued.",
+        "The FHIR API is read-only, so booking, documents and charges need the Connect APIs, and AdvancedMD schedules a test before go-live when you write data."
+      ],
+      "request": "The practice’s office key, its API Connect Agreement, an AdvancedMD admin contact, your app name, the providers, facilities and appointment types in scope, and a BAA with the practice.",
+      "check": "Appointments and documents land on the right patient, provider, facility and appointment type, with no double booking.",
+      "risk": {
+        "id": "advancedmd-certification",
+        "title": "AdvancedMD certification and a purchase at every practice",
+        "detail": "Write access needs a paid developer agreement and a demo to AdvancedMD, and each practice must also buy an API Connect Agreement.",
+        "mitigation": "Sign the developer agreement and book the demo before the first pilot, and have each practice order its API Connect Agreement in week 1.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "oncoemr",
+      "group": "ehr",
+      "name": "Flatiron OncoEMR",
+      "level": "high",
+      "approval": "partner",
+      "access": "An ONC-certified FHIR R4 API (US Core 4.0.0), HL7 interfaces built by Flatiron, and the Flatiron Vendor Network, which reviews vendors for compatibility with OncoEMR. There is no self-serve developer program; Flatiron issues API access and sets up interfaces.",
+      "sandbox": "Not published. Confirm with Flatiron whether vendors get a test OncoEMR environment.",
+      "limits": "Not published. Confirm with Flatiron.",
+      "blockers": [
+        "US Core 4.0.0 has no appointment booking, so confirm with Flatiron how bookings can be written, for example through an HL7 scheduling interface.",
+        "Flatiron says FHIR APIs may carry extra fees and HL7 interfaces a one-time implementation fee. Amounts aren’t published, so confirm who pays.",
+        "Flatiron reviews Vendor Network applications and publishes no criteria or timeline. Confirm them with Flatiron."
+      ],
+      "request": "Flatiron’s FHIR documentation and fees, a quote and timeline for a scheduling interface, the Vendor Network application, the practice’s locations, providers and visit types, and a BAA.",
+      "check": "Bookings appear in OncoEMR on the right patient, provider, location and visit type, with no duplicate patient.",
+      "risk": {
+        "id": "oncoemr-booking-path",
+        "title": "No published way to book into OncoEMR",
+        "detail": "OncoEMR’s certified FHIR API covers US Core data, which has no booking, and interfaces are built by Flatiron with unpublished fees and timelines.",
+        "mitigation": "Ask Flatiron for a scheduling interface quote in week 1, and launch with staff confirming the agent’s booking requests in OncoEMR until it’s live.",
+        "impact": 3,
+        "likelihood": 3
+      }
+    },
+    {
       "id": "oscar",
       "group": "emr-ca",
       "name": "OSCAR Pro (WELL)",
@@ -531,6 +675,59 @@
         "detail": "Each Accuro clinic signs its own contract with QHR before credentials arrive, so a multi-clinic rollout repeats the wait.",
         "mitigation": "Submit every clinic’s request on day 1 and start with the first clinic that signs.",
         "impact": 2,
+        "likelihood": 3
+      }
+    },
+    {
+      "id": "myle",
+      "group": "emr-ca",
+      "name": "MYLE (MEDFAR)",
+      "level": "medium",
+      "approval": "partner",
+      "region": "qc",
+      "access": "MEDFAR’s MYLE API, published on its developer portal, covers booking, appointment and patient management and clinic information. Access starts by contacting MEDFAR, which enables the API on the clinic’s account; the portal doesn’t publish the auth method or partner terms. MYLE is certified in Quebec with RVSQ and HUB-RDV booking interoperability.",
+      "sandbox": "Not published. Confirm with MEDFAR whether partners get a test MYLE instance.",
+      "limits": "Not published. Confirm with MEDFAR.",
+      "blockers": [
+        "MEDFAR decides who gets API access and there is no self-serve signup, so the clinic can’t grant access alone.",
+        "Quebec requires certification by Santé Québec’s certification office for products that handle health information. The vendor pays the fees, and the external verification takes 30 business days after 1 to 6 weeks of preparation.",
+        "Confirm MEDFAR’s terms for third-party voice agents early; news reports say it bought AlloMia, a front-desk voice agent that books into MYLE, in October 2026.",
+        "MYLE exchanges appointments with Rendez-vous santé Québec (RVSQ), so patients can book published slots there while the agent books the same slots."
+      ],
+      "request": "MEDFAR API access for the clinic’s account, the clinic’s agendas and appointment types, which slots are published to RVSQ, and your Quebec certification status or plan.",
+      "check": "Bookings appear once in the MYLE agenda under the right practitioner and patient, and the slot stops showing as free on RVSQ.",
+      "risk": {
+        "id": "myle-medfar-gate",
+        "title": "MEDFAR controls access to MYLE",
+        "detail": "MEDFAR must enable API access for each clinic and publishes no partner terms, and news reports say it now owns a booking voice agent of its own.",
+        "mitigation": "Ask MEDFAR for API access and written partner terms in week 1, and confirm they allow a third-party voice agent. Until then, the agent takes requests and staff book them in MYLE.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "omnimed",
+      "group": "emr-ca",
+      "name": "Omnimed",
+      "level": "high",
+      "approval": "partner",
+      "region": "qc",
+      "access": "No public API or developer program. Omnimed integrates through named partners, such as online booking and video partners, so a new agent needs an agreement with Omnimed. Omnimed is certified in Quebec with RVSQ and HUB-RDV booking interoperability.",
+      "sandbox": "Not published. Confirm with Omnimed.",
+      "limits": "Not published. Confirm with Omnimed.",
+      "blockers": [
+        "There is no published API or partner program, so access depends on an agreement with Omnimed, with no published timeline.",
+        "Quebec requires certification by Santé Québec’s certification office for products that handle health information. The vendor pays the fees, and the external verification takes 30 business days.",
+        "Omnimed exchanges appointments with RVSQ and booking partners, so the agent can collide with online bookings. Confirm how double bookings are prevented."
+      ],
+      "request": "An Omnimed partnerships contact and the integration route they allow, the clinic’s agendas and appointment types, and which slots are published to RVSQ or partner booking sites.",
+      "check": "Bookings appear once in the Omnimed agenda, and the slot stops being offered on RVSQ and partner booking sites.",
+      "risk": {
+        "id": "omnimed-no-api",
+        "title": "No published route into Omnimed",
+        "detail": "Omnimed publishes no API, and outside tools connect only as named partners, so access depends on a deal with the vendor.",
+        "mitigation": "Open partner talks in week 1 and show your Quebec certification status. Until then, the agent takes requests and staff book them in Omnimed.",
+        "impact": 3,
         "likelihood": 3
       }
     },
@@ -630,6 +827,57 @@
         "title": "Five requests at a time per app",
         "detail": "Business Central processes 5 requests at a time per user or app and queues the rest, so bursts of writes back up or fail with 429 errors.",
         "mitigation": "Queue writes on your side, back off on 429, and keep page sizes small.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "eclipse",
+      "group": "distribution",
+      "name": "Epicor Eclipse",
+      "level": "high",
+      "approval": "partner",
+      "access": "Epicor’s Eclipse API, a REST layer with endpoints for products, pricing, documents, customers, inventory and shipping. It runs Eclipse’s own validation on every write. Purchase order and warehouse APIs are sold as premium bundles. Epicor doesn’t publish how outside vendors get credentials; confirm with Epicor and the distributor.",
+      "sandbox": "Not published. Confirm with Epicor and the distributor’s IT team where writes can be tested.",
+      "limits": "Not published. Confirm with Epicor.",
+      "blockers": [
+        "Epicor doesn’t publish who may use the Eclipse API or what it costs. Confirm the distributor’s Eclipse license covers the endpoints the workflow needs.",
+        "Some APIs are premium bundles. Confirm which bundle covers the documents the agent writes, such as quotes and sales orders.",
+        "Eclipse validation rejects writes that don’t match the distributor’s branch, pricing and customer setup.",
+        "Confirm the distributor’s Eclipse release with Epicor; API support depends on the version."
+      ],
+      "request": "The distributor’s Eclipse release and API license, credentials for a dedicated API user, the branches and price lists in scope, and a place to test writes.",
+      "check": "Quotes and orders land on the right customer, branch and price list, with the same totals staff would have entered.",
+      "risk": {
+        "id": "eclipse-license",
+        "title": "Eclipse API access depends on the distributor’s Epicor license",
+        "detail": "Epicor sells the Eclipse API and its premium bundles to the distributor and doesn’t publish the terms, so write access waits on Epicor and the distributor’s contract.",
+        "mitigation": "Confirm the license and release with Epicor in week 1. Until writes are enabled, launch with staff entering the agent’s draft orders.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "p21",
+      "group": "distribution",
+      "name": "Epicor Prophet 21",
+      "level": "medium",
+      "approval": "review",
+      "access": "Prophet 21 REST and OData APIs for reads, and Interactive and Transaction APIs for writes that follow P21’s own business rules, served by the distributor’s P21 middleware on its servers or in Epicor’s cloud. Calls use a token for a P21 user. Epicor’s API documentation isn’t public; confirm endpoints with Epicor.",
+      "sandbox": "Not published. Confirm with the distributor whether it has a test P21 database.",
+      "limits": "Not published. Confirm with Epicor.",
+      "blockers": [
+        "Confirm with the distributor’s P21 admin that API access is on for your user; community guides say the OData API service is off by default per user and roles must grant the tables in scope.",
+        "Community guides list different Transaction API paths by version. Confirm the P21 version and endpoints with Epicor.",
+        "An on-premises P21 needs its middleware reachable from outside, which means the distributor’s IT and firewall changes."
+      ],
+      "request": "The P21 version and hosting, a dedicated P21 user with API access and the roles the workflow needs, the middleware URL, and a test database.",
+      "check": "Orders written through the API match what staff enter, including branch, pricing and customer terms.",
+      "risk": {
+        "id": "p21-version",
+        "title": "The P21 version decides which write APIs exist",
+        "detail": "Prophet 21’s API differs by version and hosting, and Epicor doesn’t publish the documentation.",
+        "mitigation": "Confirm the version, hosting and API user setup with the distributor’s admin in week 1, and replay order writes in a test database first.",
         "impact": 2,
         "likelihood": 2
       }
@@ -977,6 +1225,31 @@
       }
     },
     {
+      "id": "vonage",
+      "group": "telephony",
+      "name": "Vonage (APIs / Business Communications)",
+      "level": "low",
+      "approval": "admin",
+      "access": "Two products. The Vonage Voice and Messages APIs use a Vonage application: Voice authenticates with a JWT signed by the application’s private key, and calls reach the agent through API numbers, forwarding, porting or SIP. Vonage Business Communications (VBC), the office phone system, has separate APIs with OAuth and a VBC user login.",
+      "sandbox": "The Messages API sandbox covers WhatsApp, Viber, Messenger and Instagram, not SMS. Voice and SMS have no sandbox; test with separate numbers.",
+      "limits": "Voice API: 3 new outbound calls per second per account by default, shared with SIP trunking and raised on request; other Voice requests are capped at 15 per second. SMS throughput depends on 10DLC registration and carrier caps.",
+      "blockers": [
+        "US SMS from 10DLC numbers needs a registered brand and campaign, with manual reviews by Vonage and its partners.",
+        "If the numbers live on VBC, the agent needs forwarding or SIP from VBC, or a port to the API account. They are separate accounts.",
+        "Confirm with Vonage how to get A attestation for outbound caller ID; its 2022 guidance says Voice API and SIP customers must apply for it."
+      ],
+      "request": "Whether the numbers are on VBC or a Vonage API account, the numbers in scope, forwarding or SIP details, the fallback number, and 10DLC status if the workflow texts.",
+      "check": "Transfers reach the fallback number with caller ID preserved, and bursts above 3 calls per second are queued, not dropped.",
+      "risk": {
+        "id": "vonage-vbc-split",
+        "title": "Numbers live on Vonage’s phone system, not the API account",
+        "detail": "Many practices run their phones on VBC, which uses a different account and API from Vonage’s Voice and Messages APIs.",
+        "mitigation": "Map where each number lives on day 1. Launch with forwarding from VBC to an API number, and plan porting and 10DLC registration in parallel.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
       "id": "stripe",
       "group": "payments",
       "name": "Stripe",
@@ -1046,6 +1319,107 @@
         "mitigation": "Replay cases from each of the top payers by volume and route the rest to staff.",
         "impact": 2,
         "likelihood": 3
+      }
+    },
+    {
+      "id": "symitar",
+      "group": "core",
+      "name": "Jack Henry Symitar (SymXchange)",
+      "level": "high",
+      "approval": "partner",
+      "access": "SymXchange, a SOAP API on the credit union’s Symitar system, covering inquiries, transactions, file maintenance and PowerOn specfiles. Outside vendors get access through Jack Henry’s Fintech Integration Network (FIN), which replaced the Vendor Integration Program on July 1, 2025. Each credit union then sets up a SymXchange device number and Symitar user for you.",
+      "sandbox": "FIN members get a shared Jack Henry sandbox with Symitar and SymXchange, with no credit union data; a dedicated Symitar sandbox costs extra. Each credit union then installs you in its own test environment.",
+      "limits": "No rate limit is published. Searches return at most 1,000 records by default, and user tokens expire after 15 minutes idle. Confirm throughput with Jack Henry and the credit union.",
+      "blockers": [
+        "The credit union can’t clear you alone: you need FIN membership and Jack Henry’s Integration Readiness Check before any credit union installs you. Jack Henry says this typically takes 2 to 6 months.",
+        "Jack Henry lists FIN at $5,000 a year as an estimate, and says some integrations also need a Technical Account Manager at $10,000 a month.",
+        "Each credit union must request your install in its test and production environments; batch feeds or custom code are Jack Henry time-and-materials work.",
+        "Confirm whether the credit union’s Symitar is hosted by Jack Henry or run in-house; Jack Henry-hosted connections need your IP allowlisted."
+      ],
+      "request": "Your FIN status, the credit union’s Symitar hosting model, a SymXchange device number and least-privilege Symitar user, the PowerOn specfiles you may run, and the credit union’s install request for its test environment.",
+      "check": "Balances read and transfers posted by the agent match what staff see in Symitar, under your own device number and user.",
+      "risk": {
+        "id": "symitar-fin",
+        "title": "Jack Henry’s FIN program gates Symitar access",
+        "detail": "Jack Henry must approve the integration through FIN and a readiness check before any credit union can install it, and it puts the typical timeline at 2 to 6 months.",
+        "mitigation": "Apply to FIN in week 1 and build against the shared sandbox. Until you’re install-ready, launch on flows that don’t write to the core, with staff confirming actions in Symitar.",
+        "impact": 3,
+        "likelihood": 3
+      }
+    },
+    {
+      "id": "keystone",
+      "group": "core",
+      "name": "Corelation KeyStone (KeyBridge)",
+      "level": "medium",
+      "approval": "partner",
+      "access": "KeyBridge, Corelation’s real-time API to the KeyStone core, called on a host and port set up for the credit union with a KeyStone user whose privileges limit what you can do. Vendors start through Corelation Vendor Relations and can earn KeyBridge Certification.",
+      "sandbox": "Not published. Confirm with Corelation whether vendors get a test system or use the credit union’s test environment.",
+      "limits": "Not published. Confirm with Corelation.",
+      "blockers": [
+        "Corelation doesn’t publish vendor requirements, fees or a sandbox. Confirm with Vendor Relations whether you pay a vendor fee.",
+        "The credit union must give you a port and allow your IP. Confirm the steps with Corelation; one integrator’s guide says the port may need to be requested from Corelation.",
+        "Confirm whether the credit union requires KeyBridge Certification; Corelation presents it as proof of testing, not a requirement."
+      ],
+      "request": "A KeyBridge host and port, IP allowlisting, a KeyStone user with only the privileges the workflow needs, a test environment, and an introduction to Corelation Vendor Relations.",
+      "check": "Agent actions update the same member record staff see in KeyStone, and a call outside the user’s privileges fails cleanly with no partial write.",
+      "risk": {
+        "id": "keystone-terms",
+        "title": "KeyBridge vendor terms aren’t public",
+        "detail": "Corelation publishes no vendor requirements, fees, sandbox or limits, so cost and timeline are unknown until Vendor Relations replies.",
+        "mitigation": "Email Corelation Vendor Relations in week 1 with the credit union’s sponsorship, and request the port and test environment in parallel.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "fiserv-dna",
+      "group": "core",
+      "name": "Fiserv DNA",
+      "level": "high",
+      "approval": "partner",
+      "access": "DNA web-service APIs. The third-party route is Fiserv’s Developer Studio (Banking Hub) to build and test, then certification and listing in Fiserv’s AppMarket. Fiserv issues production credentials, and its developer portal publishes no DNA API reference.",
+      "sandbox": "Banking Hub offers free trial workspaces. Fiserv said in 2023 that a DNA workspace would come in 2024; confirm with Fiserv that it exists.",
+      "limits": "Not published. Confirm with Fiserv.",
+      "blockers": [
+        "Production access goes through Fiserv, not only the credit union. Confirm the terms with Fiserv; one integration vendor says production needs Fiserv certification, a credit union sponsor and an AppMarket agreement.",
+        "DNA documentation isn’t public, so the work can’t be scoped before Fiserv gives you access.",
+        "Workspace and AppMarket fees aren’t published. Confirm costs and who pays before committing to a date."
+      ],
+      "request": "The credit union’s sponsorship to Fiserv, whether its DNA is Fiserv-hosted or in-house, a DNA test environment, and the name of its Fiserv relationship manager.",
+      "check": "Member lookups and writes by the agent appear correctly in DNA under a service user scoped to the workflow.",
+      "risk": {
+        "id": "dna-fiserv-gate",
+        "title": "Fiserv controls DNA production access",
+        "detail": "DNA API docs and production credentials come from Fiserv through its developer and AppMarket channels, and the terms and fees aren’t published.",
+        "mitigation": "Ask the credit union’s Fiserv relationship manager for the DNA third-party path in week 1. Launch read-only or with staff-confirmed actions until credentials arrive.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "encompass",
+      "group": "mortgage",
+      "name": "ICE Encompass",
+      "level": "medium",
+      "approval": "review",
+      "access": "Encompass Developer Connect REST APIs with OAuth 2.0. Partner integrations use the client credentials grant, administered in the Developer Connect or Partner Connect portals by a lender user with the Super Administrator persona. What the API can do follows the Encompass user it runs as.",
+      "sandbox": "Partners get separate client IDs for test and production. Confirm with ICE what test instance and loan data you get.",
+      "limits": "Concurrency limits and daily quotas are tied to the client ID; the numbers aren’t published. Confirm with ICE. Tokens expire after 15 minutes idle and at most 2 hours.",
+      "blockers": [
+        "Only a lender user with the Super Administrator persona can administer client credentials, so the lender’s Encompass admin has to act.",
+        "The API user’s persona and field rights decide which loan fields the agent can read or write.",
+        "Confirm with ICE whether your use needs its partner program and what it costs; terms aren’t published."
+      ],
+      "request": "Client credentials from the lender’s Super Administrator, a dedicated API user and persona scoped to the fields in scope, the test instance, and the loan folders the agent may touch.",
+      "check": "Verification results land on the right loan and fields, under the API user, without overwriting fields staff own.",
+      "risk": {
+        "id": "encompass-persona",
+        "title": "Encompass personas limit what the agent can write",
+        "detail": "Reads and writes follow the Encompass user and persona the API runs as, so fields the lender restricts fail or are skipped.",
+        "mitigation": "Get a dedicated API user with a persona scoped to the workflow’s fields, and replay writes on test loans before shadow mode.",
+        "impact": 2,
+        "likelihood": 2
       }
     },
     {
@@ -1268,6 +1642,31 @@
       }
     },
     {
+      "id": "rentmanager",
+      "group": "property",
+      "name": "Rent Manager",
+      "level": "medium",
+      "approval": "partner",
+      "access": "Rent Manager’s web API, with read and write access to the customer’s database, for members of the Rent Manager Integrations Program. Confirm the auth details with Rent Manager; one integrator’s guide says production integrations use a partner token for each customer’s company code.",
+      "sandbox": "Approved partners get API documentation and a test portal, per one integrator’s guide. Confirm with Rent Manager.",
+      "limits": "Not published by Rent Manager. Confirm the rate limit and IP allowlisting with Rent Manager; one integrator reports about 500 requests per minute per credential set and a required IP allowlist.",
+      "blockers": [
+        "Rent Manager approves each integration partner. Confirm the fees and timing; one integrator’s guide lists $3,000 a year plus $50 a month per client.",
+        "Confirm with Rent Manager that the customer’s account has API access turned on; integrators say it may need to be enabled first.",
+        "Integrators say calls must come from allowlisted IP addresses. Confirm before the agent runs from new infrastructure."
+      ],
+      "request": "Your Integrations Program status, the customer’s company code and API enablement, the properties and locations in scope, and your server IPs for the allowlist.",
+      "check": "Showings and prospect records land on the right property and unit, and units marked leased are never offered.",
+      "risk": {
+        "id": "rentmanager-program",
+        "title": "Rent Manager approves each integration partner",
+        "detail": "API access comes through Rent Manager’s Integrations Program, and each customer’s account is set up separately, so the first customer waits on both.",
+        "mitigation": "Apply to the program in week 1 and confirm fees and timing with Rent Manager. Until then, launch with staff confirming showings in Rent Manager.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
       "id": "greenhouse",
       "group": "recruiting",
       "name": "Greenhouse",
@@ -1397,6 +1796,83 @@
       }
     },
     {
+      "id": "smartsheet",
+      "group": "work",
+      "name": "Smartsheet",
+      "level": "low",
+      "approval": "admin",
+      "access": "Smartsheet API 2.0 (REST). Server-to-server integrations use an API access token created in Smartsheet and sent as a Bearer token; Smartsheet recommends a shared service account. Integrations that act for each user use OAuth 2.0. Smartsheet Gov, EU and Australia have their own base URLs and tokens.",
+      "sandbox": "No free developer sandbox. Registering an OAuth app needs a licensed user on a Business plan or higher, so test in a separate workspace on a paid plan.",
+      "limits": "300 requests per minute per token. Attachments and cell history count as 10 requests, capped at 30 per minute. OAuth access tokens last about 7 days and renew with the refresh token.",
+      "blockers": [
+        "Pro and Free plans have no API access. Confirm the customer is on Business, Enterprise or Advanced Work Management.",
+        "Enterprise admins can set token expiry and revoke tokens, and a token tied to a person stops working when that person leaves. Ask for a service account.",
+        "Gov and EU customers are on separate instances; a token from smartsheet.com won’t work there."
+      ],
+      "request": "The plan and region, a service-account token or OAuth consent from a user who can edit the sheets in scope, the sheet IDs and column map, and any token-expiry policy.",
+      "check": "Rows land in the right sheet with the right column types, and a 429 is retried with backoff, not dropped.",
+      "risk": {
+        "id": "smartsheet-token-owner",
+        "title": "Smartsheet token tied to one person’s account",
+        "detail": "An API token has its owner’s sharing rights and stops working when that user is removed or an admin expiry policy applies.",
+        "mitigation": "Use a dedicated service account with access to only the sheets in scope, and alert on 401 errors.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "msproject",
+      "group": "work",
+      "name": "Microsoft Planner (premium) / Project",
+      "level": "high",
+      "approval": "review",
+      "access": "Project for the web was retired into Planner in August 2025 and Project Online retired on September 30, 2026. Premium plans live in Dataverse (msdyn_project and related tables) and are written through the Project schedule APIs in an OperationSet. Basic plans use the Microsoft Graph Planner APIs. Every route needs an Entra ID app registration with tenant admin consent.",
+      "sandbox": "A non-production Dataverse environment in the customer’s tenant, or a developer or trial tenant with Planner and Project licenses.",
+      "limits": "Dataverse service protection limits per user: 6,000 requests and 20 minutes of execution time per 5 minutes, and 52 concurrent requests. Schedule APIs: up to 200 operations per OperationSet and 10 open OperationSets per user.",
+      "blockers": [
+        "The Project schedule APIs accept only Project-licensed users, not application or integration users, so a background agent needs a licensed named account. That often fails security review.",
+        "Customers still on Project Online lost access on September 30, 2026. Find out where their plans went before building anything.",
+        "Confirm with Microsoft whether premium plans can be written through Graph; forum threads say premium tasks can be read but not written that way.",
+        "Tenant consent and Dataverse security roles often sit with separate Microsoft 365 and Power Platform admins."
+      ],
+      "request": "Where the plans live now (Planner basic, Planner premium or Project Server), the Dataverse environment URL, a licensed user for the schedule APIs, admin consent for the app, and the plans in scope.",
+      "check": "Tasks land in the right plan, bucket and assignee with the right dates, and a batch either commits fully or leaves nothing behind.",
+      "risk": {
+        "id": "msproject-licensed-user",
+        "title": "Planner premium writes need a licensed user account",
+        "detail": "Microsoft blocks application users from the Project schedule APIs, so writes to premium plans need a Project-licensed user identity.",
+        "mitigation": "Agree on a dedicated licensed integration user in week 1. Otherwise limit the agent to basic plans or read-only queries.",
+        "impact": 3,
+        "likelihood": 3
+      }
+    },
+    {
+      "id": "arcgis",
+      "group": "gis",
+      "name": "Esri ArcGIS (Online / Enterprise / Survey123)",
+      "level": "medium",
+      "approval": "admin",
+      "access": "ArcGIS REST API. Writes go to a hosted feature layer, such as the one behind a Survey123 form, through applyEdits or addFeatures. Auth is an API key, OAuth 2.0 app credentials or a signed-in user. Creating credentials needs a Creator user type with the right privileges; API keys need ArcGIS Enterprise 11.4 or later.",
+      "sandbox": "ArcGIS Location Platform has a free monthly tier, but its layers can’t be shared publicly and it doesn’t support Survey123 webhooks. Test against a copy of the survey’s layer in the customer’s org.",
+      "limits": "No per-request applyEdits limit is published; confirm with Esri. Queries are capped per layer by maxRecordCount. ArcGIS Online feature storage uses credits (2.4 credits per 10 MB per month).",
+      "blockers": [
+        "API keys and app credentials reach only items their creator owns, up to 100 items. If the survey layer belongs to someone else, ownership has to be sorted out first.",
+        "Esri advises against API keys for private layers with sensitive data, so county GIS teams may insist on OAuth app credentials or a named service user.",
+        "ArcGIS Enterprise portals are often behind the firewall or older than 11.4, which means IT tickets and no API keys.",
+        "Survey123 webhooks need change tracking turned on and can deliver the same event more than once."
+      ],
+      "request": "ArcGIS Online or Enterprise (and its version), the survey and its feature layer ID, a Creator account or admin to create the credential, and the field schema and domains per request type.",
+      "check": "Each replayed request lands as one feature with the right geometry, category and attributes, and a repeated webhook creates no duplicate.",
+      "risk": {
+        "id": "arcgis-ownership",
+        "title": "ArcGIS credentials can’t reach the survey layer",
+        "detail": "ArcGIS developer credentials only reach items their creator owns, and survey layers often belong to a GIS staffer or a Survey123 publisher account.",
+        "mitigation": "Have the layer owner or an admin create the credential in week 1, then test applyEdits against a copy of the layer.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
       "id": "shopify",
       "group": "commerce",
       "name": "Shopify",
@@ -1519,6 +1995,773 @@
         "detail": "AMS360 hides secured customers from an API user until the agency asks Vertafore to open access, so lookups for those clients come back empty.",
         "mitigation": "Ask the agency which customers are secured and request access from Vertafore on day 1. Replay lookups for secured clients.",
         "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "tazworks",
+      "group": "screening",
+      "name": "TazWorks (Instascreen)",
+      "level": "medium",
+      "approval": "partner",
+      "access": "TazAPI: an XML gateway (Basic) or a JSON API with JWT tokens from an API application in the TazAPI developer portal (Advanced). A verification vendor that receives orders is set up as a data provider. Confirm the steps with TazWorks; integrators’ guides say TazWorks support enables the vendor, then each CRA admin enters your credentials and routes orders to you. TazWorks is part of MeridianLink.",
+      "sandbox": "The TazAPI developer portal gives a sample sandbox application, with separate test and production applications. Confirm a test setup for the data-provider route with TazWorks.",
+      "limits": "Not published. Confirm with TazWorks.",
+      "blockers": [
+        "Confirm vendor enablement with TazWorks early; integrators’ guides say no CRA can route orders to you until TazWorks turns you on.",
+        "The data-provider spec, partner terms and fees aren’t public; the partner page is an application form.",
+        "Each CRA must add you as a vendor and set routing per search type. A missing routing rule means orders never reach the agent."
+      ],
+      "request": "Vendor enablement and the interface spec from TazWorks, the CRA’s TazWorks instance, an admin to route verification orders to you, and the order statuses the CRA expects back.",
+      "check": "Routed verification orders reach the agent, and each result returns to the same order and moves it to the CRA’s review status.",
+      "risk": {
+        "id": "tazworks-enable",
+        "title": "TazWorks must turn your vendor on",
+        "detail": "Orders reach a verification vendor only after TazWorks enables it and each CRA sets routing, so neither you nor the CRA controls the start date.",
+        "mitigation": "Ask TazWorks for enablement and the interface spec in week 1, and confirm the steps. Until routing is live, CRA staff pass orders to you and key results back in.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "accio",
+      "group": "screening",
+      "name": "Accio Data",
+      "level": "medium",
+      "approval": "partner",
+      "access": "Vendors write results into Accio’s XML interface, with documentation from Accio support. Since February 28, 2025 every integration must be registered with Accio, which issues an access key tied to the IP addresses you connect from. Each CRA client gives you its account credentials and endpoint.",
+      "sandbox": "Accio provides a sandbox after you’ve built the integration and sent your endpoint and product list. The vendor does its own testing.",
+      "limits": "Not published. Confirm with Accio Data.",
+      "blockers": [
+        "The access key is tied to registered IP addresses, so an agent on cloud hosts with changing outbound IPs gets rejected.",
+        "Each licensee registers separately, so each new CRA customer can mean a new registration and key.",
+        "Accio says it doesn’t charge providers to integrate, but its FAQ says monthly minimums may apply. Confirm with Accio."
+      ],
+      "request": "Accio’s API documentation, your integration registration and access key, fixed outbound IPs, and the CRA’s Accio account and products in scope.",
+      "check": "Results posted with the key from a registered IP land on the right order, and posts from other IPs are rejected.",
+      "risk": {
+        "id": "accio-registration",
+        "title": "Accio’s integration key is tied to your IP addresses",
+        "detail": "Accio accepts XML only with a registered access key sent from registered IP addresses, and each licensee registers separately.",
+        "mitigation": "Register in week 1 with fixed outbound IPs, and update the registration before changing hosting.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "clearstar",
+      "group": "screening",
+      "name": "ClearStar",
+      "level": "high",
+      "approval": "partner",
+      "access": "ClearStar is a CRA that runs its own screening platform. It publishes no API reference or vendor program; API documentation and custom integrations are available on request. Expect a direct agreement with ClearStar.",
+      "sandbox": "Not published. Confirm with ClearStar.",
+      "limits": "Not published. Confirm with ClearStar.",
+      "blockers": [
+        "There is no public vendor program; access goes through ClearStar’s partnership and implementation teams.",
+        "ClearStar acts as the CRA itself, so its compliance team decides whether a verification vendor can work inside its orders.",
+        "Older filings describe a web services and HR-XML interface. Confirm with ClearStar which interface is current before you build."
+      ],
+      "request": "ClearStar’s API documentation and a test account, a named implementation contact, the verification types in scope, and the fields where results and contact attempts are written.",
+      "check": "Completed verifications appear on the right ClearStar order with source, contact and date, and no duplicate order is created.",
+      "risk": {
+        "id": "clearstar-closed",
+        "title": "ClearStar has no public vendor program",
+        "detail": "ClearStar shares API documentation only on request and publishes no vendor terms, sandbox or limits, so scope and timing depend on ClearStar.",
+        "mitigation": "Get a named ClearStar contact and the documentation before committing to a date. Until then, staff enter the agent’s results in ClearStar.",
+        "impact": 2,
+        "likelihood": 3
+      }
+    },
+    {
+      "id": "ezyvet",
+      "group": "vet",
+      "name": "ezyVet (IDEXX)",
+      "level": "medium",
+      "approval": "partner",
+      "access": "ezyVet REST API with OAuth 2.0 client credentials and a partner ID that IDEXX issues once it accepts you as a commercial partner. The practice then enables your partner integration in its ezyVet admin, selects the scopes and gives you the downloaded credentials files. Tokens last 12 hours.",
+      "sandbox": "Accepted commercial partners get a dedicated sandbox with API and UI logins. There is no self-serve sandbox before you apply.",
+      "limits": "Most endpoints allow 60 calls per minute, plus a global default of 180 calls per minute per database per partner. Over the limit returns 429, and ezyVet may disable a connection whose excess calls slow the site.",
+      "blockers": [
+        "IDEXX accepts commercial partners that fit its product strategy, then requires an agreement and a certification demo.",
+        "Before general release you run a 6-week pilot with 5 clinics that consent in writing, and IDEXX issues the pilot credentials itself.",
+        "A clinic can’t hand an outside vendor its own private-integration credentials; ezyVet’s rules send vendors to the partner program."
+      ],
+      "request": "Your ezyVet partner status, the practice’s site and region, the credentials files with the scopes enabled, and the divisions (locations) in scope.",
+      "check": "Records sync to the right animal, consult and division, with no 429 errors at peak clinic hours.",
+      "risk": {
+        "id": "ezyvet-partner",
+        "title": "IDEXX partner certification and pilot come first",
+        "detail": "Without IDEXX commercial partner status there is no partner ID, and the path runs through an agreement, certification and a 5-clinic, 6-week pilot.",
+        "mitigation": "Apply in week 1, line up pilot clinics early, and throttle on the rate-limit headers.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "cornerstone",
+      "group": "vet",
+      "name": "IDEXX Cornerstone",
+      "level": "high",
+      "approval": "partner",
+      "access": "Cornerstone runs on a server at each practice and has no public developer API. IDEXX takes requests through its practice management integration request form and lists approved Cornerstone integrations. Confirm with IDEXX which interface an approved partner gets, and before reading the Cornerstone database directly; IDEXX publishes no terms allowing it.",
+      "sandbox": "Not published. Confirm with IDEXX whether approved partners get a test Cornerstone install.",
+      "limits": "Not published. Confirm with IDEXX.",
+      "blockers": [
+        "IDEXX reviews integration requests and publishes no criteria, fees or timeline. Confirm terms before promising a date.",
+        "An on-premises sync agent needs admin access to the Cornerstone server and outbound internet through the practice firewall, so practice IT must approve it.",
+        "Each hospital runs its own server and Cornerstone version. Confirm supported versions with IDEXX for every site in a multi-hospital group."
+      ],
+      "request": "Your IDEXX integration approval or submitted request, the Cornerstone version at each site, server admin access and an IT contact, and firewall rules for outbound traffic.",
+      "check": "Notes land on the right patient, client and visit, and the sync resumes after a server reboot.",
+      "risk": {
+        "id": "cornerstone-onprem",
+        "title": "No public Cornerstone API, and IDEXX approval comes first",
+        "detail": "Cornerstone has no public third-party API, so access depends on IDEXX’s partner review plus software on each practice server.",
+        "mitigation": "Submit IDEXX’s integration request in week 1 and get the allowed access in writing. Until then, launch read-only or with staff pasting and confirming notes.",
+        "impact": 3,
+        "likelihood": 3
+      }
+    },
+    {
+      "id": "avimark",
+      "group": "vet",
+      "name": "Covetrus AVImark",
+      "level": "high",
+      "approval": "partner",
+      "access": "AVImark runs at the practice. Covetrus’s supported route is the Covetrus Connect API through its Technology Integration Partner Program, which it calls the only authenticated and supported way to integrate with its practice software. Confirm with Covetrus before reading AVImark data any other way.",
+      "sandbox": "Not published. Confirm with Covetrus.",
+      "limits": "Not published. Confirm with Covetrus.",
+      "blockers": [
+        "Covetrus’s partner page says new integration requests are paused while it updates its APIs and partner framework (checked November 2026).",
+        "When requests reopen, expect an application and a partner agreement before you see API docs. Confirm the wait with Covetrus.",
+        "Each practice runs its own AVImark version. Confirm what Covetrus Connect supports for it."
+      ],
+      "request": "Your Covetrus Connect partner status or the date requests reopen, the AVImark version at each site, and the staff IDs and record sections in scope.",
+      "check": "Notes land in the right AVImark record sections, under the right patient and doctor.",
+      "risk": {
+        "id": "avimark-paused",
+        "title": "Covetrus has paused new integration requests",
+        "detail": "No supported route is open to a new vendor until Covetrus reopens its partner program, and Covetrus Connect is its only supported path.",
+        "mitigation": "Ask Covetrus for the reopening date now. Meanwhile, launch with staff confirming the agent’s output in AVImark, not an unsupported database connection.",
+        "impact": 3,
+        "likelihood": 3
+      }
+    },
+    {
+      "id": "modmed",
+      "group": "specialty",
+      "name": "ModMed EMA (Modernizing Medicine)",
+      "level": "medium",
+      "approval": "partner",
+      "access": "EMA Proprietary API (FHIR R4 style, read, search, create and update), reached through ModMed’s synapSYS program. ModMed provisions a sandbox, agrees the resources (ACLs) your app needs, runs a demo and technical review, then issues a production key. Each practice then generates its own credentials for your app. The Certified FHIR API is self-service but read and search only, so it can’t book.",
+      "sandbox": "ModMed provisions a generic sandbox after you join the synapSYS program and emails the credentials. Practice sandboxes also exist. The sandbox opens all resources; production gets only the resources ModMed approves.",
+      "limits": "1,250 calls per minute per API key by default (about 20 per second). Over the limit returns 429. ModMed asks you to stagger calls and to contact your credential provisioner or synapsys@modmed.com for more.",
+      "blockers": [
+        "No production key until ModMed’s demo, proof of concept and technical review pass, and resource provisioning can take up to two weeks after you request it.",
+        "Appointments and slots live in ModMed Practice Management. A practice on EMA alone has no scheduling data in the API, so booking needs ModMed PM.",
+        "Each practice must generate credentials for your app; ModMed publishes no fee for the Proprietary API. Confirm fees with ModMed.",
+        "The legacy password grant is being sunset, so build on the OAuth2 client credentials flow from the start."
+      ],
+      "request": "Your synapSYS sandbox and an MMI contact, the practice’s firm URL prefix, whether it runs ModMed PM or EMA alone, credentials the practice generates for your app, and the locations, providers and appointment types in scope.",
+      "check": "An appointment booked from a free slot lands in ModMed PM on the existing patient with the right provider, location and appointment type, and no duplicate patient is created.",
+      "risk": {
+        "id": "modmed-synapsys-review",
+        "title": "ModMed’s technical review gates production",
+        "detail": "ModMed issues a production key only after a demo, a sandbox proof of concept and a technical review of the resources you call and how often. Approved resources can take up to two weeks to provision.",
+        "mitigation": "Join synapSYS in week 1, list every resource (Appointment, Slot, Patient) in the first request, and book the review early. Until the key arrives, hand bookings to staff.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "nextech",
+      "group": "specialty",
+      "name": "Nextech",
+      "level": "medium",
+      "approval": "partner",
+      "access": "Nextech Partner API (FHIR STU3, with R4 on Select) behind a registration process. A Nextech representative issues the credentials, and every call carries the practice ID. The practice orders your API in Nextech’s Community Portal, and Nextech reviews the order. Booking runs on the practice management side: Select (Book Appointment) or Practice+ (Create Appointment). The IntelleChartPRO API only reads patients and encounters.",
+      "sandbox": "Not published. Confirm with Nextech what test practice you get before production.",
+      "limits": "20 requests per second per endpoint, enforced per user. Over the limit returns 429, and the limit can change. Nextech says the API is for real-time requests and asks partners to avoid bulk syncing in business hours.",
+      "blockers": [
+        "Only a “Super Nextech Community User” at the practice can order your API, and the order then goes to Nextech for review. Confirm the turnaround with Nextech; one integrator’s guide says about 2 business days.",
+        "Select and Practice+ have different endpoints and auth (Select credentials must be reset through Microsoft on first login; Practice+ uses a partner ID and secret), so confirm which one the practice runs.",
+        "Fees for partner API access aren’t published, and Nextech says it doesn’t maintain third-party apps. Confirm fees and support terms with Nextech.",
+        "Nextech announced built-in AI patient-access partners (Assort Health, EliseAI) in October 2026, per press coverage. Confirm it doesn’t limit API scope for other voice vendors."
+      ],
+      "request": "Your Nextech developer registration, the practice’s Nextech practice ID, whether it runs Select or Practice+, the Community Portal order for your API, and the appointment types, purposes, providers and locations in scope.",
+      "check": "An appointment booked from a valid slot shows on the Nextech schedule as booked (not held) on the existing patient, with the right type, purpose, provider and location.",
+      "risk": {
+        "id": "nextech-partner-order",
+        "title": "Nextech issues credentials and the practice must order",
+        "detail": "Nextech hands out partner credentials only after registration, and each practice must order your API through its Community Portal for Nextech to review. Without both, the agent has no access.",
+        "mitigation": "Submit Nextech’s connection request form in week 1 and walk the practice’s Super Community User through the order on the first call. Until credentials arrive, hand bookings to staff.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "nextgen",
+      "group": "ehr",
+      "name": "NextGen Enterprise / Office",
+      "level": "high",
+      "approval": "partner",
+      "access": "NextGen Enterprise: fill in the API Onboarding form, register in the NextGen Developer Portal, and join the API Distributor Program, which needs a signed agreement. The Global Service Account lets an app call most Enterprise API routes without a user launching it. NextGen Office: the certified APIs are read only (GET on USCDI v1 data), so there is no published booking path.",
+      "sandbox": "Enterprise developers get free, optional sandboxes for FHIR R4 and the Enterprise APIs, with test data. NextGen refreshes them monthly or quarterly and shares them with other developers. You must finish initial development there before beta. Not published for Office. Confirm with NextGen.",
+      "limits": "Enterprise: not published. Confirm with NextGen. Office: 20 requests per minute per IP address, 1,480 requests per 12 hours per Smart App Launch app, and one bulk request per patient per week.",
+      "blockers": [
+        "NextGen’s standard API terms cover only USCDI GET routes. Any other route, including booking writes, needs NextGen’s prior written consent and Distributor terms, and using one in production without approval can end access.",
+        "Distributor fees vary with data scope and with read-only versus read and write, and NextGen doesn’t publish the amounts. Payment isn’t due until General Release. Confirm the fee with NextGen.",
+        "Beta must run with a participating NextGen client after a signed agreement and sandbox work, and NextGen publishes no review timeline.",
+        "On Office, the Smart App Launch or Bulk FHIR API costs $2,400 to onboard per vendor per practice, plus $50 or $100 a month, and still allows no writes."
+      ],
+      "request": "Whether the customer runs NextGen Enterprise (version 5.9 or later) or Office, your Developer Portal app and signed Distributor agreement, NextGen’s written approval for the appointment routes you need, the customer as beta site, and the locations, resources and event types in scope.",
+      "check": "An appointment booked through the approved route lands in the Enterprise PM appointment book on the existing patient with the right resource, location and event type, and no duplicate patient is created.",
+      "risk": {
+        "id": "nextgen-write-consent",
+        "title": "Booking writes need NextGen’s written consent",
+        "detail": "NextGen’s standard API terms approve only read-only USCDI routes. Writing appointments needs separate Distributor terms, NextGen’s written consent, variable fees and a client beta, and Office has no write API at all.",
+        "mitigation": "File the Onboarding form in week 1, name the appointment routes in the Distributor request, and line up the customer as beta site. Until approval, read schedules only and hand bookings to staff.",
+        "impact": 3,
+        "likelihood": 3
+      }
+    },
+    {
+      "id": "pioneerrx",
+      "group": "pharmacy",
+      "name": "PioneerRx",
+      "level": "high",
+      "approval": "partner",
+      "access": "No self-serve developer signup. An outside vendor applies through PioneerRx’s Vendor Integration Inquiry form to become a Connected Vendor, and PioneerRx (RedSail Technologies) decides what it turns on. Its API docs describe endpoints the vendor hosts and PioneerRx calls (Patient Data Exchange, MTM Actions), a real-time prescription event feed PioneerRx can enable, and an Enterprise API, using basic auth plus ApplicationKey and LocationKey headers.",
+      "sandbox": "No sandbox or test pharmacy is published. Confirm with PioneerRx what test setup Connected Vendors get, and plan a pilot in one store.",
+      "limits": "Not published. Confirm with PioneerRx.",
+      "blockers": [
+        "PioneerRx publishes no criteria, timeline or fee for becoming a Connected Vendor, and its API docs say they aren’t meant to be given to pharmacies, so the pharmacy can’t grant you access on its own.",
+        "Several integrations have PioneerRx call endpoints you host, so you need a public HTTPS endpoint that accepts PioneerRx’s auth headers before any data flows.",
+        "Setup is per store. Confirm the steps with PioneerRx; one integrator’s guide has staff enter the vendor’s endpoints in each location’s integration settings and restart PioneerRx before it goes live.",
+        "PioneerRx already lists AI phone and refill vendors such as Synerio and Pharmesol as Connected Vendors, so ask whether the pharmacy already pays for an overlapping tool."
+      ],
+      "request": "Your Connected Vendor status or inquiry, the NCPDP and NPI for each store, which PioneerRx integration will be enabled, one pilot store, and a BAA with the pharmacy.",
+      "check": "A refill taken by the agent lands on the right patient, Rx number and refill number, and shows in the right PioneerRx queue for staff review.",
+      "risk": {
+        "id": "pioneerrx-connected-vendor",
+        "title": "PioneerRx must approve you as a Connected Vendor",
+        "detail": "There is no self-serve API. Access runs through PioneerRx’s vendor inquiry and its own setup, and PioneerRx publishes no timeline, fee or approval criteria.",
+        "mitigation": "Submit the Vendor Integration Inquiry in week 1 and have the pharmacy owner back the request. Until access exists, the agent takes refill requests and hands them to staff to enter in PioneerRx.",
+        "impact": 3,
+        "likelihood": 3
+      }
+    },
+    {
+      "id": "pharmacy-pms",
+      "group": "pharmacy",
+      "name": "Other pharmacy management system",
+      "level": "high",
+      "approval": "partner",
+      "access": "Most pharmacy systems publish no open API, and the vendor decides which outside products connect. McKesson EnterpriseRx is fully hosted by McKesson and certifies outside vendors on its interfaces through the pharmacy’s account executive. RedSail (PioneerRx, QS/1, BestRx) and Outcomes (Rx30) run their own vendor integrations. Confirm the path with the vendor named in the pharmacy’s contract.",
+      "sandbox": "None published by these vendors. Confirm what test environment the vendor provides, and plan a pilot in one store.",
+      "limits": "Not published. Confirm with the pharmacy system vendor.",
+      "blockers": [
+        "Vendors approve integrations case by case and publish no fees or timelines. McKesson sends interface questions to the pharmacy’s account executive.",
+        "Renewal requests to prescribers (RxRenewal), change requests and CancelRx travel over Surescripts from the pharmacy system, which must be Surescripts-certified. Your agent can’t send them itself, so it has to hand the request to the pharmacy system.",
+        "Surescripts features are switched on per pharmacy. RedSail’s CancelRx guide says Surescripts Database Services must enable CancelRx for each participating pharmacy.",
+        "Systems are changing under you: CMS requires NCPDP SCRIPT v2023011 by January 1, 2028, and RedSail is retiring QS/1 NRx and migrating those pharmacies in waves."
+      ],
+      "request": "The pharmacy system name and version, the vendor’s written approval for your integration, the stores in scope, how refills and renewals reach the system today, and a BAA with the pharmacy.",
+      "check": "Refill requests from the agent appear in the pharmacy system on the right patient and prescription, and renewals to prescribers go out from the pharmacy system, not from the agent.",
+      "risk": {
+        "id": "pms-vendor-gate",
+        "title": "The pharmacy system vendor controls access",
+        "detail": "There is usually no public API, and the vendor approves each outside integration on its own terms and schedule. The pharmacy can’t grant access by itself.",
+        "mitigation": "Name the system on the first call, contact its partner team in week 1, and get the pharmacy to sponsor the request. Until approval, the agent collects refill requests and staff enter them.",
+        "impact": 3,
+        "likelihood": 3
+      }
+    },
+    {
+      "id": "pointclickcare",
+      "group": "ltc",
+      "name": "PointClickCare",
+      "level": "medium",
+      "approval": "partner",
+      "access": "Both PointClickCare programs start with its Apply for Partnership form, and PointClickCare decides which one fits. The USCDI Connector is a FHIR R4 API for USCDI v1 data with SMART on FHIR scopes, for patient, provider or bulk apps. The Marketplace program gives approved partners PointClickCare’s APIs for an authorized use case. PointClickCare approves your Developer Portal account, and each customer enables you by facility.",
+      "sandbox": "USCDI Connector development apps are auto-approved in a shared PointClickCare FHIR sandbox with test logins. Production apps need PointClickCare’s approval. Confirm what sandbox the Marketplace program gives you.",
+      "limits": "No rate limits are published. PointClickCare’s API terms say it may cap the data some queries return, require paging, and throttle or suspend an app that threatens stability or security. Confirm with PointClickCare.",
+      "blockers": [
+        "Each app needs PointClickCare’s written approval and a Letter of Authorization from each customer, then enablement by facility that takes at least 2 weeks.",
+        "USCDI Connector customers pay a flat $65 per app per facility per month (checked November 2026). Confirm current Marketplace terms; a 2020 partner agreement filed in a public securities filing charges partners a per-facility monthly fee with a minimum facility commitment.",
+        "You must sign a BAA, or the Canadian equivalent, with each customer, and the Marketplace agreement bars access from outside Canada or the U.S.",
+        "Marketplace apps pass PointClickCare’s App Validation, and PointClickCare can require it again after material changes to the app."
+      ],
+      "request": "Your PointClickCare program and partner status, the customer’s Letter of Authorization, the facilities and tenant ID, the scopes you need, and a BAA or PHIPA agent agreement with the operator.",
+      "check": "Data pulled for one facility matches the residents and active orders staff see in PointClickCare, with no residents from other facilities and complete paging on large pulls.",
+      "risk": {
+        "id": "pcc-partner-fees",
+        "title": "Approval and per-facility fees gate each home",
+        "detail": "PointClickCare must approve the app, each customer must authorize it in writing and enable it by facility, and fees run per facility per month.",
+        "mitigation": "Apply for partnership in week 1, get the operator’s Letter of Authorization signed early, price the per-facility fee into the deal, and start with one facility. Until enablement, staff export the reports the agent needs.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "cdk",
+      "group": "dms",
+      "name": "CDK Global (Fortellis / 3PA)",
+      "level": "high",
+      "approval": "partner",
+      "access": "CDK DMS APIs through Fortellis, CDK’s developer network. CDK has moved app vendors from its older CDK Global Partner Program to Fortellis. You register an app in a verified Fortellis organization, pick CDK APIs and their pricing plans, accept CDK’s API terms and pay to start certification. After certification and a reviewed Marketplace listing, each dealer activates your app, and every call carries that dealer’s Subscription ID plus an OAuth token from your app credentials.",
+      "sandbox": "Fortellis has a Test environment that mirrors Production, and you validate your app there before certification. The API Directory’s call tester only shows request mechanics with example data from the spec. Confirm with CDK what test dealer data you get.",
+      "limits": "Each API’s pricing plan can rate limit you, and usage above the plan is charged as an overage or denied. Per-API numbers aren’t published publicly. Confirm them on the plans shown at registration.",
+      "blockers": [
+        "Fortellis charges a one-time Onboarding Service Fee of $4,500 USD ($6,075 CAD) to start certification and $169 USD ($229 CAD) per month once your app is listed, plus each CDK API’s own plan (checked November 2026). CDK can change its API fees by posting them.",
+        "CDK’s API terms limit use to the apps named in your order, require CDK’s written approval for any other use, require a signed enrollment from each dealer, and bar any access to CDK systems not authorized by CDK. CDK has blocked integrators that used dealer logins since August 2015.",
+        "Either side can end the API terms on 30 days’ notice, and CDK can block access for late payment or end it at once for a breach.",
+        "Data access has been costly and contested. In 2017 court testimony, 3PA cost one vendor $735 per dealer per month, up from about $160 in 2014, and in 2025 CDK agreed to pay $630 million to settle a vendor class’s price claims. Confirm current per-API prices before quoting the dealer."
+      ],
+      "request": "Your Fortellis organization and app ID, the CDK APIs and plans you selected, each rooftop’s signed enrollment and Subscription ID, the stores in scope, and a named dealer contact who can activate the app.",
+      "check": "Every call uses the right rooftop’s Subscription ID, and writes land on the existing customer and vehicle in CDK with no duplicate customer records.",
+      "risk": {
+        "id": "cdk-fortellis-only",
+        "title": "CDK allows access only through Fortellis, after certification",
+        "detail": "CDK’s API terms bar access to CDK systems by any means it hasn’t authorized, and CDK has blocked integrators using dealer logins since 2015. Until your Fortellis app is certified and each dealer enrolls, the agent has no approved way in.",
+        "mitigation": "Register the app and pay the onboarding fee in week 1, and get each rooftop’s enrollment early. Until certification, have staff enter the agent’s output into CDK. Plan a manual fallback too: a June 2024 cyberattack took CDK dealers’ DMS offline for days.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "reynolds",
+      "group": "dms",
+      "name": "Reynolds and Reynolds (RCI)",
+      "level": "high",
+      "approval": "partner",
+      "access": "Reynolds Certified Interface (RCI) only. A vendor submits the RCI Participant Interest Form on reyrey.com (or writes to RCI@reyrey.com), then goes through certification for a specific application and a specific set of data components. Reynolds builds the interface for each certified participant and re-certifies it over time. RCI covers the ERA, POWER and Reynolds CRM systems.",
+      "sandbox": "Not published. Confirm with Reynolds what test environment certification uses.",
+      "limits": "Not published. Confirm with Reynolds. You only get the data components your application is certified for.",
+      "blockers": [
+        "Reynolds has never accepted a dealer’s authorization alone. A federal court found in 2017 that Reynolds allows third-party access only with its own approval, its RCI contract treats any access without its written consent as Non-Approved Access, and its dealer agreements bar giving passwords to non-employees.",
+        "Reynolds detects and disconnects automated access. It began blocking a data integrator in 2009 and blocked it effectively by 2013.",
+        "RCI prices aren’t public, and the standard RCI contract barred vendors from discussing them. In 2017 court testimony, one vendor’s RCI package rose from $247 per dealer per month in 2011 to $893 in 2017, and another paid about $835 plus write-back fees. Confirm current pricing with Reynolds.",
+        "A pre-certified vendor can’t market or ship a certified interface until Reynolds certifies the specific application. No timeline is published."
+      ],
+      "request": "Whether each store runs ERA-IGNITE or POWER, the stores in scope, your RCI status for this application and its data components, write-back approval if the agent writes, and the dealer’s signed authorization.",
+      "check": "The agent reads only its certified data fields, and any write-back lands on the right customer, vehicle and repair order in ERA.",
+      "risk": {
+        "id": "reynolds-rci-only",
+        "title": "Reynolds blocks any access outside RCI",
+        "detail": "Reynolds’ licenses forbid third-party access on dealer logins, and it detects and cuts off automated sessions. In 2017 the Seventh Circuit vacated an injunction that had forced Reynolds to allow that access, so a dealer can’t authorize you around RCI.",
+        "mitigation": "Submit the RCI interest form in week 1 and scope the smallest data set the workflow needs. Until certification, deliver the agent’s output to staff to enter, or work from reports the dealer runs itself.",
+        "impact": 3,
+        "likelihood": 3
+      }
+    },
+    {
+      "id": "tekion",
+      "group": "dms",
+      "name": "Tekion",
+      "level": "medium",
+      "approval": "partner",
+      "access": "Tekion Automotive Partner Cloud (APC) APIs and webhooks. You register at apc.tekioncloud.com, accept Tekion’s API License and Data Sharing Agreement, describe your use case and pick APIs, and Tekion approves you before you get the API documentation and a token. The dealer then authorizes your integration in its Integration Hub.",
+      "sandbox": "Not published. Confirm with Tekion whether approved partners get a test dealer environment.",
+      "limits": "Standard partners get standard rate limits and Enterprise partners get higher ones, but the numbers aren’t published. Tekion can revoke access for an unusual number or frequency of requests. Confirm history depth too: a 2023 forum post said one API returned only the last 7 days.",
+      "blockers": [
+        "Tekion reviews each application and publishes no criteria or timeline. Additional APIs and higher rate limits sit in the Enterprise tier.",
+        "The API agreement allows integration only through documented APIs, bars sharing your token, and limits data use to the uses listed in its Schedule 1.",
+        "Either party can end the API agreement at any time for any reason, which ends your license.",
+        "Confirm pricing for your tier with Tekion. In a 2023 dealer forum thread, a Tekion representative said most integrations are free and heavier use is charged through Enterprise and premium plans."
+      ],
+      "request": "Your APC approval and tier, the APIs and webhooks approved for your use case, the dealer’s authorization in Integration Hub, and the rooftops in scope.",
+      "check": "Records written through the API land on the right customer, vehicle and rooftop, and webhook events match what staff see in Tekion.",
+      "risk": {
+        "id": "tekion-apc",
+        "title": "Tekion approval and tier decide what the agent can reach",
+        "detail": "Without APC approval there is no token, and the tier Tekion grants sets which APIs and rate limits you get. Tekion can end the API agreement at any time.",
+        "mitigation": "Register in week 1 with a narrow use case, confirm the tier covers every API the workflow needs, and throttle well below the limits. Have staff handle any step whose API isn’t in your tier.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "mcleod",
+      "group": "tms",
+      "name": "McLeod (LoadMaster / PowerBroker)",
+      "level": "medium",
+      "approval": "partner",
+      "access": "McLeod REST web services for LoadMaster (carriers) and PowerBroker (brokers), returning JSON or XML. Two routes: the cloud-hosted APIs in McLeod’s Innovation Hub, where you register, request a key per API and send X-Api-Key plus the customer’s X-Mcld-Tenant header; or the customer’s own server, where calls use Basic auth or a bearer token that the customer’s admin registers inside LoadMaster or PowerBroker. Calls enforce the same permissions and validations as the desktop app.",
+      "sandbox": "The Innovation Hub offers trial keys and a documentation sandbox for trying calls, and a central Direct-Hosted sandbox server that McLeod says is only for viewing and testing API results. There is no published test copy of a customer’s own data; ask the customer for a test or training company.",
+      "limits": "Not published. Confirm with McLeod.",
+      "blockers": [
+        "McLeod issues Innovation Hub keys per API on request and certifies partners, but publishes no criteria, fee or timeline for either. Confirm them with McLeod early.",
+        "Confirm the customer licenses McLeod’s API module. McLeod’s API page describes the published services as an API module and offers custom APIs for customers.",
+        "Confirm whether the customer runs McLeod on its own servers or McLeod hosts it. Customer-hosted systems need network access to the customer’s server, and the cloud-hosted APIs need the tenant ID from McLeod.",
+        "Order Creation requests may be auto-accepted or held for review depending on the tenant’s settings, so a booked load may not exist until staff accept it."
+      ],
+      "request": "LoadMaster or PowerBroker and the version, who hosts it, whether the API module is licensed, a dedicated McLeod user or token for your agent with the narrowest role, the tenant ID if using cloud-hosted APIs, and a test company.",
+      "check": "Orders created by the agent land on the right customer with the right stops, appointment windows, equipment and rate, show the agent’s user in the audit trail, and no duplicate order is created on retry.",
+      "risk": {
+        "id": "mcleod-partner",
+        "title": "McLeod keys and certification are not self-serve",
+        "detail": "Cloud-hosted API keys are requested per API and approved by McLeod, and McLeod’s supported route for outside vendors is its certified partner network. Neither the criteria, fees nor timeline are published.",
+        "mitigation": "Register on the Innovation Hub and request keys in week 1, and email McLeod partnerships about certification. Until approved, use a customer-issued token on the customer’s own server if the customer agrees, or hand staff a draft that they enter in McLeod.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "oracle-otm",
+      "group": "tms",
+      "name": "Oracle Transportation Management (OTM)",
+      "level": "medium",
+      "approval": "review",
+      "access": "OTM (now Oracle Fusion Cloud Transportation and Global Trade Management) REST API for business objects such as order releases, shipments and locations, plus a data export API. The customer’s admin creates an integration user and grants per-resource view or update rights. Auth is OAuth 2 client credentials through an Oracle Identity Cloud Service app whose client ID is set on that user, or Basic auth on the resources-int path, which the customer can disable.",
+      "sandbox": "Every subscription includes one Test instance and one Production instance; extra test instances depend on the customer’s contract. Oracle offers no public developer sandbox, so you test in the customer’s Test instance.",
+      "limits": "Paging defaults to 25 records and is capped at 1,000 per request, a limit Oracle says can’t be raised. The customer can set a lower cap, and Oracle Ops can cap data per collection. Oracle publishes no request rate limit. Confirm with Oracle and the customer.",
+      "blockers": [
+        "The customer’s OTM admin must create the integration user and grant view and update rights on each REST resource you need. Missing rights block calls.",
+        "OAuth 2 needs a confidential app in the customer’s Oracle identity domain, set up by their identity admin, and the client ID added to the OTM integration user.",
+        "Test and Production update on different quarterly cadences, so an Oracle update can reach Test first and change behavior. Oracle tells customers to rerun integration tests before each production update."
+      ],
+      "request": "The OTM release, the Test and Production URLs, an integration user with only the REST resource rights you need, an OAuth client from their identity admin, the domain in scope, and a Test instance refreshed from Production.",
+      "check": "Order releases or shipments posted by the agent appear in the right domain with the right locations, dates and reference numbers, paging past 1,000 records returns every record, and the same replay passes again after the next quarterly update on Test.",
+      "risk": {
+        "id": "otm-integration-user",
+        "title": "Two admins must set up access before any call works",
+        "detail": "OTM access needs an integration user with per-resource rights from the OTM admin and an OAuth client from the identity admin. Basic auth can be turned off, so there is no shortcut.",
+        "mitigation": "Send the exact resource list and the OAuth steps from Oracle’s Integration Guide in week 1 and test access on the Test instance first. Until access exists, deliver files that staff load through the customer’s existing OTM integration.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "opendock",
+      "group": "tms",
+      "name": "Opendock (dock scheduling)",
+      "level": "medium",
+      "approval": "admin",
+      "access": "Opendock (a Loadsmart product) Nova REST API. A carrier registers a free Opendock account, links it to its carrier company by USDOT number or name, then exchanges email and password for a JWT at POST /auth/login. With that token the agent searches warehouses, reads load types and open times, and creates appointments. Warehouses use the same API with their own users, and a socket.io stream pushes appointment changes.",
+      "sandbox": "Opendock runs a staging server, neutron.staging.opendock.com, for testing; Opendock says it is not for production and is subject to changes and resets. Confirm that staging has a test warehouse your carrier account can book.",
+      "limits": "Not published. JWT lifetime depends on the user’s role. The event stream does not replay events missed while disconnected. Confirm limits with Opendock.",
+      "blockers": [
+        "Each warehouse sets its own rules: required reference (PO) numbers, custom fields, documents to upload and which load types carriers may book. A booking that misses one is rejected.",
+        "Some warehouses must confirm bookings, so a new appointment can sit in Requested status rather than Scheduled.",
+        "Auth is a user login, not an API key. Confirm with Loadsmart that an agent may book under a carrier user. opendock.com/terms points to Loadsmart’s subscription agreement, which limits access to the customer’s employees."
+      ],
+      "request": "A dedicated Opendock carrier user for your agent tied to the carrier’s company, the list of warehouses and their reference number formats, who at the carrier gets the confirmation emails, and Loadsmart’s written OK for automated booking.",
+      "check": "An appointment booked by the agent shows at the right warehouse, dock, load type and local start time with the right PO number, reaches Scheduled status or is flagged when it stays Requested, and the time is written back to the load in the carrier’s TMS.",
+      "risk": {
+        "id": "opendock-terms",
+        "title": "Opendock’s terms may not cover an agent using a carrier login",
+        "detail": "Opendock books through a named user’s email and password, and the terms opendock.com links to limit access to the customer’s own employees. Loadsmart says tens of thousands of appointments a month are booked by API, but no published term addresses an outside agent booking for a carrier.",
+        "mitigation": "Ask Loadsmart in week 1 to confirm in writing that your agent may book for carriers under a dedicated user. Until then, have the agent find open slots and draft the booking, and let carrier staff submit it.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "guidewire",
+      "group": "carrier",
+      "name": "Guidewire (PolicyCenter / ClaimCenter)",
+      "level": "high",
+      "approval": "partner",
+      "access": "Guidewire Cloud API, a REST API on the carrier’s PolicyCenter or ClaimCenter. Every caller app must be registered with Guidewire Hub before it can get tokens: the carrier contacts Guidewire, Guidewire registers the app and sends back a client ID and secret. A server-side agent uses the OAuth 2.0 client credentials flow as a standalone service, and the carrier’s API role decides which endpoints and fields it can reach.",
+      "sandbox": "Carriers on Guidewire Cloud have dev, QA and UAT planets in non-production star systems, plus preprod. Ask the carrier for access to one. Guidewire publishes no self-serve sandbox for outside vendors; Marketplace partners build and test validated integrations, but the environment terms aren’t published. Confirm with Guidewire.",
+      "limits": "Each resource has a maximum page size; the default is 25 per page and the maximum 100, and the carrier can change both per resource. Total counts stop at 1,000. Rate limits are not published. Confirm with Guidewire and the carrier.",
+      "blockers": [
+        "You can’t register yourself. The carrier must ask Guidewire to register your app with Guidewire Hub, and you get nothing until Guidewire returns the client ID and secret.",
+        "API roles are allowlists and a new caller has no endpoint access, so the carrier must build a role for your service. Authority limits and permissions are checked against the carrier’s proxy service user.",
+        "Listing on the Guidewire Marketplace takes an application, a PartnerConnect agreement and a scope document approved by Guidewire’s engineering validation team within six months. Fees aren’t published. Confirm whether the carrier requires it.",
+        "The Cloud API docs cover Guidewire Cloud releases. Confirm whether the carrier runs Guidewire Cloud or a self-managed install, and which APIs a self-managed system exposes."
+      ],
+      "request": "Whether the carrier runs Guidewire Cloud (and which release) or self-managed, a Guidewire Hub registration for a standalone service with client ID and secret, an API role limited to the endpoints in scope, the proxy service user’s authority limits, a dev or UAT planet with test claims, and the lines of business in scope.",
+      "check": "Notes, documents or activities the agent writes land on the right claim and exposure under the carrier’s service user, and a call to an endpoint outside your API role is refused.",
+      "risk": {
+        "id": "guidewire-hub-role",
+        "title": "The carrier must register you and grant an API role",
+        "detail": "Only Guidewire can register your app with Guidewire Hub, and only after the carrier asks. Even then you have no endpoint access until the carrier’s team builds an API role for you, so go-live rides on the carrier’s Guidewire backlog.",
+        "mitigation": "In week 1, send the carrier the exact auth flow (standalone service) and the endpoints and fields you need so it can file the Guidewire request and draft the role together. Until credentials arrive, deliver drafts that adjusters enter in ClaimCenter.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "duckcreek",
+      "group": "carrier",
+      "name": "Duck Creek (Policy / Claims)",
+      "level": "high",
+      "approval": "partner",
+      "access": "Duck Creek publishes no public API reference. It describes Duck Creek Anywhere as a REST API and its Integration Hub as insurance-ready APIs and prebuilt connections. Outside vendors go through the Duck Creek partner ecosystem: integrations are built for Duck Creek to validate and list on its Content Exchange, and the carrier, on OnDemand (Duck Creek’s SaaS) or its own install, controls the credentials. Confirm the auth method with Duck Creek.",
+      "sandbox": "Not published. Confirm with Duck Creek whether partners get a development environment, or use the carrier’s non-production environment.",
+      "limits": "Not published. Confirm with Duck Creek.",
+      "blockers": [
+        "Partnership starts with a request form reviewed by Duck Creek’s Partner Ecosystem team. Requirements, fees and timeline aren’t published. Confirm them early.",
+        "API docs aren’t public, so you can’t scope the work until Duck Creek or the carrier gives you access.",
+        "Content Exchange packages can ship as source code and SQL scripts installed with Duck Creek’s Package Utility, some with manual steps. Confirm who installs and tests yours on the carrier’s environment.",
+        "Duck Creek launched an Agentic AI Platform on April 28, 2026, with an AI Gateway that uses MCP and A2A to connect partner agents. Confirm with the carrier whether outside agents must connect through it."
+      ],
+      "request": "Whether the carrier is on Duck Creek OnDemand or self-hosted, the Policy or Claims release, an introduction to its Duck Creek account team, a non-production environment, the API or integration method Duck Creek approves for your use, and the lines of business in scope.",
+      "check": "Claim notes, tasks or policy updates the agent writes appear on the right claim or policy in Duck Creek, and the same lookups return what adjusters see.",
+      "risk": {
+        "id": "duckcreek-gated-docs",
+        "title": "Duck Creek’s API path isn’t public",
+        "detail": "Duck Creek publishes no API reference, sandbox, limits or partner terms, so cost and timeline stay unknown until its partner team and the carrier engage.",
+        "mitigation": "Submit the partner request form in week 1 with the carrier’s sponsorship, and ask the carrier’s Duck Creek team for the approved integration method. Until then, deliver outputs that staff enter in Duck Creek.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "archer",
+      "group": "grc",
+      "name": "Archer (Archer IRM)",
+      "level": "medium",
+      "approval": "review",
+      "access": "Archer offers a Web Services API (SOAP), a RESTful API and a Content API. For REST, you POST the instance name, user name, domain and password to /platformapi/core/security/login and send the returned token as an Archer session-id Authorization header. The bank’s Archer admin creates the user, and every call is limited by that user’s Archer permissions. There’s no published OAuth or API key option.",
+      "sandbox": "Archer publishes no vendor sandbox. Ask the bank for access to its non-production Archer instance, and confirm with the bank that its Archer license covers your use there.",
+      "limits": "Not published. Confirm with Archer and the bank.",
+      "blockers": [
+        "With single sign-on on, the RESTful API only issues a session token if Allow manual bypass is selected in Archer Control Panel. The Web Services API can issue one without it. Either way the bank’s security team must approve a password-based service account.",
+        "The bank’s admin must build an access role that covers only the applications in scope, such as third-party profiles, assessments and findings.",
+        "Confirm the bank’s Archer release, SaaS or on-premises, and base path. The REST base URL moved from /api/ to /platformapi/ in release 6.5.",
+        "Confirm session handling with Archer. Community forum posts say a second login with the same account ends the first session, so parallel workers need separate accounts."
+      ],
+      "request": "The bank’s Archer release and deployment, the base URL, a dedicated Archer user with an access role limited to the applications in scope, the bank’s decision on SSO manual bypass or the Web Services login, a non-production instance, and the application and field IDs you will read or write.",
+      "check": "Records the agent creates or updates appear in the right Archer application with the right field values and record permissions, and a request outside the service user’s access role is refused.",
+      "risk": {
+        "id": "archer-sso-bypass",
+        "title": "Bank security must approve a password login for the agent",
+        "detail": "Archer’s REST login takes a user name and password, and on SSO instances it needs Allow manual bypass. Many bank security teams won’t approve a password-based account that skips SSO without review.",
+        "mitigation": "Raise the login method in the week 1 security review and offer the Web Services login path, a narrow access role and IP restrictions. Until approved, deliver files that staff import or enter in Archer.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "clio",
+      "group": "legal",
+      "name": "Clio (Manage)",
+      "level": "medium",
+      "approval": "admin",
+      "access": "Clio Manage API v4 (REST) with OAuth 2.0 authorization code. You register a developer application in Clio’s developer portal for each region your customers use: US, CA, EU and AU each have their own portal, API host and app ID. A Clio user at the firm authorizes your app, and the token works only in that region. Access tokens last 30 days; refresh tokens don’t expire.",
+      "sandbox": "Clio has no separate sandbox. You sign up for a 7-day Clio Manage trial in each region you need, then apply to have Clio convert it to a free developer account. Clio reviews the request, so conversion isn’t automatic.",
+      "limits": "50 requests per minute per access token during peak hours (US/CA 04:00 to 19:00 Pacific, Monday to Friday; EU and AU have their own windows), higher off-peak. Over the limit returns 429 with Retry-After. Some endpoints have their own limits, and Clio doesn’t grant custom increases (checked November 2026).",
+      "blockers": [
+        "The authorizing user’s role applies on top of your app permissions. If billing rate or hours visibility is restricted, time entries come back with prices or hours redacted, and updates to redacted fields return 403.",
+        "App permissions are fixed when a user authorizes. Adding one later, such as write access to activities, means every user has to authorize again.",
+        "Confirm the firm’s plan. Clio’s private-app guide says apps and integrations aren’t available on the EasyStart tier.",
+        "Clio’s docs don’t say whether an unlisted app may serve many firms. An App Directory listing needs Clio’s security and compliance questionnaire, a demo and a listing review, with no published timeline or fee. Confirm with Clio’s API partnerships team."
+      ],
+      "request": "The firm’s Clio region and plan, a user to authorize your app whose role can see and edit time entries and billing rates, the matters and timekeepers in scope, and who reviews entries before bills go out.",
+      "check": "Time entries land on the right matter and user with the right date, hours, rate and description, with no redacted fields and no 429 errors during peak hours.",
+      "risk": {
+        "id": "clio-role-redaction",
+        "title": "The authorizing user’s role limits what the agent sees",
+        "detail": "Clio applies the user’s role on top of app permissions. With restricted billing rate or hours visibility, time entry prices and hours come back null or redacted and writes to those fields fail with 403, so the agent drafts against incomplete data.",
+        "mitigation": "In week 1 have the firm admin pick an authorizing user whose role sees all billing data, register the app in the firm’s region, and test one read and one write on a real matter. Until that passes, staff enter time from the agent’s drafts.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "surepoint",
+      "group": "legal",
+      "name": "SurePoint (LMS)",
+      "level": "high",
+      "approval": "partner",
+      "access": "SurePoint publishes no developer portal or API docs. Its site now sells LMS as SurePoint Finance Enterprise (formerly LMS), hosted on AWS. Confirm the connection method with SurePoint; one integrator’s help guide says a SurePoint-issued service account is required and the firm requests it from its SurePoint account manager. A PointOne case study describes client and matter sync every 15 minutes and approved entries landing in LMS5 for pre-bill review.",
+      "sandbox": "Not published. Confirm with SurePoint whether a test environment exists for the firm’s LMS version.",
+      "limits": "Not published. Confirm with SurePoint.",
+      "blockers": [
+        "The service account comes from SurePoint, not the firm’s own admin. Confirm the lead time and any fee with the firm’s SurePoint account manager; one integrator’s guide says the account needs rights to sign in, read data and create time entries.",
+        "SurePoint’s partner page invites software providers to apply by email and says an integration is either available, can be developed for a customer, or is planned. It publishes no criteria, agreement or fee. Confirm them with SurePoint.",
+        "Confirm how LMS matches timekeepers. One integrator’s FAQ says releases fail with “user not found” unless the attorney’s email in LMS matches exactly.",
+        "Confirm what LMS does with entries that break the firm’s narrative rules. One integrator’s FAQ says LMS can reject them without returning an error."
+      ],
+      "request": "The firm’s SurePoint product and version (LMS5, LMS+, LMS V or Finance Enterprise), a dedicated service account from SurePoint with read and create-time rights, API documentation for that version, the timekeepers with their emails as stored in LMS, and the firm’s narrative and billing-code rules.",
+      "check": "Every released entry appears in LMS pre-bill review on the right client, matter, timekeeper and billing code, and the count in LMS matches the count the agent sent.",
+      "risk": {
+        "id": "surepoint-no-public-api",
+        "title": "Access depends on SurePoint, with no public API docs",
+        "detail": "SurePoint publishes no API documentation, limits or partner terms, so the connection method, scope and lead time stay unknown until SurePoint answers. Confirm the details; one integrator’s guide says a SurePoint-issued service account is required and rejected entries may not return errors.",
+        "mitigation": "In week 1 have the firm ask its SurePoint account manager for a service account and API docs, and email SurePoint’s partnerships team. Until access works, deliver drafted entries for staff to key into LMS, and reconcile counts after every release.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "elite3e",
+      "group": "legal",
+      "name": "Elite 3E",
+      "level": "medium",
+      "approval": "review",
+      "access": "3E REST and OData APIs covering clients, matters, time, timekeepers and costs. On 3E Cloud the firm enables access in its own Microsoft Entra ID with an app registration and gives you the OAuth 2.0 token URL, client ID, secret, scope and its 3E instance ID. Use delegated permissions (authorization code) when acting for a user so 3E ethical walls apply. On-premises 3E (2.8.1 and later) exposes the API on the firm’s server with Windows authentication.",
+      "sandbox": "Elite partners can request credentials for Elite’s Partner API Test Instance from partnerprogram@elite.com. Without partner status, test on the firm’s own non-production 3E instance; confirm the firm has one.",
+      "limits": "3E Cloud: 30 calls per minute for REST and 60 per minute for OData, with OData pages capped at 5,000 rows; throttling starts when you go over. On-premises firms set their own limits. For bulk extraction Elite points to 3E Change Stream webhooks (checked November 2026).",
+      "blockers": [
+        "The firm’s Entra ID admin must register the app, add the 3E API permissions and grant admin consent, and the firm must give you the instance ID for each environment.",
+        "On-premises 3E uses Windows authentication on the firm’s network, so firm IT must approve a domain account and network access for the agent.",
+        "30 REST calls per minute on 3E Cloud is low for syncing time across many timekeepers, so writes have to be queued and batched.",
+        "Premier Technology Partner status means Elite certification and ongoing compatibility testing. Elite publishes no criteria, timeline or fee. Confirm with Elite."
+      ],
+      "request": "Whether the firm runs 3E Cloud or on-premises and which version, an Entra ID app registration with delegated 3E API permissions and admin consent (token URL, client ID, secret, scope), the instance IDs for test and production, and the timekeepers and matters in scope.",
+      "check": "Time cards created through the API pass 3E validation and land as pending time on the right matter, timekeeper and task code, with walled matters invisible to the agent and no throttling at 30 calls per minute.",
+      "risk": {
+        "id": "elite3e-cloud-throttle",
+        "title": "3E Cloud allows 30 REST calls a minute",
+        "detail": "Elite caps 3E Cloud REST at 30 calls per minute and OData at 60, and says the APIs are meant for lower-volume integrations. A sync that polls matters and posts one time card per call hits the cap when many timekeepers release time at once.",
+        "mitigation": "In week 1 measure calls per synced entry, queue writes with backoff, and take matter changes from 3E Change Stream instead of polling. If the queue backs up, staff post time from a reviewed export.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "opera",
+      "group": "hotel",
+      "name": "Oracle OPERA Cloud (OHIP)",
+      "level": "medium",
+      "approval": "partner",
+      "access": "OPERA Cloud REST and streaming APIs through the Oracle Hospitality Integration Platform (OHIP). A vendor registers an application in the OHIP partner developer portal and gets an application key. To reach a hotel’s production environment, the hotel creates an integration user in its OPERA Cloud tenancy, its chain administrator approves it, and you add that environment in your portal. Hotels must not share credentials from their own OHIP portal with vendors.",
+      "sandbox": "A partner sandbox shared by more than 1,300 companies, so other developers’ activity shows up in it. Calls in the sandbox are billed like production calls.",
+      "limits": "50 requests per second per gateway, shared by every consumer of that gateway, with short bursts to 100; over the limit returns 429. Only one client per chain and application key can consume the event stream (checked November 2026).",
+      "blockers": [
+        "Oracle grants access to production OPERA Cloud environments only after your solution is listed in the Oracle Hospitality Cloud Marketplace under OHIP, which needs an Oracle PartnerNetwork membership.",
+        "OHIP is a pay-as-you-go subscription with no free tier, and the owner of the application key pays for every call. Oracle’s FAQ puts calls above the 10,000-transaction plan at about USD 20 per 10,000.",
+        "The hotel’s chain administrator must approve your integration user before you can add the environment, so each new hotel group waits on its own admin."
+      ],
+      "request": "The hotel’s chain and property codes, an integration user approved by the chain administrator, the environment name and enterprise ID from the hotel’s OHIP portal, and the room types, rate codes and packages the agent may book.",
+      "check": "Reservations land in OPERA Cloud on the right property, room type and rate code, attached to an existing guest profile when one exists, with no duplicate profile.",
+      "risk": {
+        "id": "opera-ohip-listing",
+        "title": "Production OPERA Cloud access needs an Oracle Marketplace listing",
+        "detail": "Oracle opens production OPERA Cloud environments to a vendor only after it lists its solution in the Oracle Hospitality Cloud Marketplace, and every API call, including sandbox calls, is billed to the vendor’s application key.",
+        "mitigation": "Join Oracle PartnerNetwork and submit the Marketplace listing in week 1, and budget OHIP calls from replay volume. Until production access arrives, the agent takes booking requests and staff enter them in OPERA.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "mews",
+      "group": "hotel",
+      "name": "Mews",
+      "level": "low",
+      "approval": "partner",
+      "access": "Mews Connector API. Every request carries a ClientToken that identifies your application, which Mews’s integration team issues after certification, and an AccessToken for each property, which the property’s admin provides. Mews says the API is free to access and use.",
+      "sandbox": "A public demo environment with shared test tokens and no real data. Replay real bookings only against the hotel’s own account after certification.",
+      "limits": "200 requests per AccessToken within 30 seconds, on a sliding window, in demo and production. Over the limit returns 429 with Retry-After. Mews calls the limits best-effort and says they may change without notice.",
+      "blockers": [
+        "You register through the Mews Marketplace form, test in demo and submit a certification form. Mews checks your demo requests against the operations and purpose you list, and publishes no timeline.",
+        "Certification covers the operations you list, so a write you add later, such as cancelling reservations, needs to be in scope first.",
+        "Each property’s admin must give you its AccessToken."
+      ],
+      "request": "Your Mews certification status, an AccessToken from each property’s admin, and the services, resource categories (room types) and rates the agent may book.",
+      "check": "Reservations land in Mews on the right service, room category and rate, attached to the existing customer when one exists, with no 429 errors at peak.",
+      "risk": {
+        "id": "mews-certification",
+        "title": "No production token until Mews certifies your requests",
+        "detail": "Mews issues the production ClientToken only after it reviews your demo-environment requests against the operations and purpose you declared, and it publishes no timeline.",
+        "mitigation": "Register and build against the demo environment in week 1, and list every operation the agent needs, including reservation writes, on the certification form. Until certified, the agent takes requests and staff book them in Mews.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "cloudbeds",
+      "group": "hotel",
+      "name": "Cloudbeds",
+      "level": "medium",
+      "approval": "partner",
+      "access": "Cloudbeds REST API. A technology partner’s app gets access when a Cloudbeds user at the property grants it through OAuth 2.0. Properties can also use the API for their own integrations, which Cloudbeds calls a self-service feature. Partners apply through Cloudbeds’ technology partner page.",
+      "sandbox": "Not published. Confirm with Cloudbeds whether partners get a test property.",
+      "limits": "Cloudbeds’ FAQ says 5 requests per second for properties and 10 for technology partners, and its tech specs list 10 per second for all endpoints. Going over can get API credentials suspended for a time.",
+      "blockers": [
+        "Cloudbeds requires a minimum of 5 pilot properties, and up to 10 for the official go-live, before a partner integration is generally available.",
+        "The API license makes certification your expense, and significant changes to your app need re-certification.",
+        "The license bars using personal data from the API for anything beyond the allowed use, so check that model training or analytics on guest data is covered."
+      ],
+      "request": "Your Cloudbeds partner status, a property user to grant OAuth access, the pilot properties lined up, and the room types and rate plans the agent may book.",
+      "check": "Reservations land in Cloudbeds on the right property, room type and rate plan, and the agent stays under the per-second limit at peak.",
+      "risk": {
+        "id": "cloudbeds-pilots",
+        "title": "Cloudbeds wants 5 to 10 pilot properties",
+        "detail": "Cloudbeds asks technology partners for at least 5 pilot properties and up to 10 for the official go-live, and certification is at your expense.",
+        "mitigation": "Line up pilot properties and apply in week 1. For a single hotel, ask whether it can use the API under its own self-service access while partner status is pending.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "stayntouch",
+      "group": "hotel",
+      "name": "Stayntouch PMS",
+      "level": "medium",
+      "approval": "partner",
+      "access": "Stayntouch Connect API with OAuth 2.0 client credentials scoped to a hotel chain or instance. A vendor starts with a ticket in the Stayntouch help center, returns the API Client Certification form, signs an NDA and agreements, and then gets sandbox access. After certification Stayntouch activates the integration in production.",
+      "sandbox": "Sandbox (UAT) access after the agreements are signed.",
+      "limits": "Not published. Confirm with Stayntouch.",
+      "blockers": [
+        "Stayntouch reviews the certification for correctness, stability and data security before activating production, and publishes no timeline or fee. Confirm them with Stayntouch.",
+        "Each property must email Stayntouch to authorize your access to its production data."
+      ],
+      "request": "Your Stayntouch certification status, the property’s authorization email to Stayntouch, the chain or instance your credentials cover, and the room types and rates the agent may book.",
+      "check": "Reservations and guest requests land in Stayntouch on the right property, room type and rate, with no duplicate guest.",
+      "risk": {
+        "id": "stayntouch-cert",
+        "title": "Stayntouch certifies and activates each integration",
+        "detail": "Production access comes only after Stayntouch reviews your certification and the property authorizes you by email, and neither step has a published timeline.",
+        "mitigation": "Open the integration ticket and send the certification form in week 1, and have the property send its authorization email on day 1. Until activation, staff confirm the agent’s bookings in Stayntouch.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "accela",
+      "group": "permitting",
+      "name": "Accela Civic Platform",
+      "level": "medium",
+      "approval": "partner",
+      "access": "Accela Construct API (REST v4). Register an agency app (for staff users) on the Accela Developer Portal to get an App ID and secret; since August 2026 new developer accounts stay disabled until Accela approves the request. Tokens come from OAuth 2.0 (authorization code, implicit or password flow) and carry the agency name, the environment (such as TEST or PROD) and scopes. The agency’s administrator must enable your app for the agency in the Construct Admin Portal, and Accela support (hosted) or the agency’s Construct admin (on-premises) gives you the agency and environment names.",
+      "sandbox": "The Developer Portal’s Test API Token utility issues tokens against Accela’s shared test agency (the docs name Islandton; a 2017 release note says to use NULLISLAND for clean data). It holds demo data, not the agency’s record types or fees, so replay in the agency’s own TEST environment once its admin enables your app there.",
+      "limits": "Per-app rate limits are set by the agency in the Agency Admin Portal and enforced since June 2026: over the limit returns 429 with X-RateLimit-Limit, X-RateLimit-Remaining and X-RateLimit-Reset headers. Accela publishes no numbers and may also throttle traffic it sees as degrading the API. Access tokens last 15 minutes and refresh tokens 8 hours. Confirm the agency’s limit with Accela.",
+      "blockers": [
+        "Accela’s Developer Terms of Use bar collecting fees for an app from third parties unless an agreement with Accela authorizes it, so a paid agent needs an Accela agreement. Accela publishes no partner criteria, timeline or fee; confirm them with Accela.",
+        "The agency’s Construct admin must enable your app for the agency, and must tick Payment Enabled separately before the app can call the Commit Payment API.",
+        "Accela’s standard subscription agreement defines an Authorized User as a named employee, contractor or agent the customer bought a subscription for, so the agent’s staff login may need its own licensed seat. Confirm with the agency.",
+        "Refresh tokens expire after 8 hours, so an unattended agent needs a re-authorization plan. Construct admins can generate and revoke refresh tokens per app in the Admin Portal; confirm the approach with Accela."
+      ],
+      "request": "The agency name and its TEST and PROD environment names, the Construct admin enabling your App ID with the scopes you need, a dedicated Civic Platform user for the agent, the per-app rate limit the agency set, the modules and record types in scope, and Accela’s written authorization for commercial use.",
+      "check": "Records the agent creates in the agency’s TEST environment land with the right record type, address and parcel, contacts and fees, workflow starts at the expected task, and no call returns 429 at the agency’s configured limit.",
+      "risk": {
+        "id": "accela-commercial-terms",
+        "title": "Accela must authorize a paid third-party app",
+        "detail": "Accela’s Developer Terms of Use forbid collecting fees for an app from third parties without an agreement with Accela, and the app still does nothing for an agency until that agency’s admin enables it.",
+        "mitigation": "Contact Accela’s partner team in week 1 for a written agreement that covers your use, and get the agency admin to enable your app in TEST. Until both exist, the agent drafts applications that staff enter in Accela.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "energov",
+      "group": "permitting",
+      "name": "Tyler EnerGov (Enterprise Permitting & Licensing)",
+      "level": "high",
+      "approval": "partner",
+      "access": "Tyler sells the EnerGov (now Enterprise Permitting & Licensing, EPL) APIs as licensed toolkits on the agency’s Tyler contract, such as the Community Development API Toolkit and the Business Management API Toolkit. Tyler provides each toolkit’s documentation on request, and buying one includes no Tyler development work. Tyler publishes no EPL developer portal or self-serve keys (checked November 2026), so credentials come from the agency’s EPL environment once the toolkit is licensed. Civic Access is Tyler’s applicant portal, not an integration API.",
+      "sandbox": "Not published. Tyler’s implementation plans set up a testing environment per agency, so confirm with the agency and Tyler that a non-production EPL environment exists and that the API toolkit works there too.",
+      "limits": "Not published. Confirm with Tyler.",
+      "blockers": [
+        "The API toolkit is a separate annual line item. Indio, California’s 2021 Tyler amendment listed the EnerGov Community Development API Toolkit at $9,534 a year before discount. Pricing varies by contract, so confirm the agency owns the toolkit.",
+        "EPL suites are licensed per named user in Tyler contracts such as Indio’s, so the agent’s login may need its own seat. Confirm the user count with the agency.",
+        "Confirm the agency’s EPL version. One integrator’s guide (SeeClickFix) requires EPL 9.6.1 or later for the REST/JSON API and warns that the API license may cost extra.",
+        "Tyler publishes no developer program for outside EPL vendors. Partner inquiries go through Tyler’s Connect With Tyler form, and the Tyler Platform Alliance covers Tyler’s Application Platform and Data & Insights, not EPL. Confirm the path with Tyler."
+      ],
+      "request": "Whether the agency’s Tyler investment summary includes the EPL API toolkits (Community Development, Business Management), the toolkit documentation from Tyler, the EPL version and hosting (Tyler-hosted or on-premises), API credentials and a named user for the agent in a test environment, and the permit, license and case types in scope.",
+      "check": "Permit applications and inspection requests the agent creates through the toolkit in the test environment land on the right parcel and contact with the expected fees and workflow step, and nothing posts to production.",
+      "risk": {
+        "id": "energov-toolkit",
+        "title": "The agency may not own the EPL API toolkit",
+        "detail": "Tyler licenses EPL APIs as paid toolkits on the agency’s contract and publishes no self-serve keys or developer program for outside vendors. If the toolkit isn’t on the contract, adding it is a Tyler order that goes through the agency’s procurement.",
+        "mitigation": "On the first call, ask for the Tyler investment summary and look for the API toolkit lines. If they’re missing, request the Tyler quote in week 1 and launch with drafts that staff enter in EPL.",
+        "impact": 3,
         "likelihood": 2
       }
     },

@@ -8,7 +8,7 @@ out without hurting anyone.
   telephony, identity, payments, legacy systems and the agent itself. Each row has the
   likelihood, the typical delay, a mitigation and a source. Sources tagged `[weak]` are blogs
   or aggregators; confirm them.
-- `catalog/systems.json`: 64 systems with how the agent gets in, who approves it, sandbox
+- `catalog/systems.json`: 110 systems with how the agent gets in, who approves it, sandbox
   options, limits, typical blockers and the exact day-1 access request.
 - `checklist.md`: a one-page go-live checklist, from access requests to the 30-day watch.
 - `bin/golive.mjs`: a zero-dependency CLI that prints a go-live plan from a list of systems.
