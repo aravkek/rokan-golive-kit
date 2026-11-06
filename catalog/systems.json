@@ -1,0 +1,1789 @@
+{
+  "source": "rokan.computer/plan catalog",
+  "exported": "2026-11-06",
+  "groups": [
+    {
+      "id": "crm",
+      "label": "CRM"
+    },
+    {
+      "id": "scheduling",
+      "label": "Scheduling & field service"
+    },
+    {
+      "id": "ehr",
+      "label": "EHR & practice management"
+    },
+    {
+      "id": "emr-ca",
+      "label": "Canadian clinic EMR"
+    },
+    {
+      "id": "erp",
+      "label": "ERP & accounting"
+    },
+    {
+      "id": "ticketing",
+      "label": "Ticketing & help desk"
+    },
+    {
+      "id": "telephony",
+      "label": "Telephony & contact center"
+    },
+    {
+      "id": "payments",
+      "label": "Payments & claims"
+    },
+    {
+      "id": "identity",
+      "label": "Identity & access"
+    },
+    {
+      "id": "property",
+      "label": "Property management"
+    },
+    {
+      "id": "recruiting",
+      "label": "Recruiting & HR"
+    },
+    {
+      "id": "commerce",
+      "label": "Ecommerce & marketing"
+    },
+    {
+      "id": "insurance",
+      "label": "Insurance agency management"
+    },
+    {
+      "id": "legacy",
+      "label": "No API / legacy"
+    }
+  ],
+  "systems": [
+    {
+      "id": "salesforce",
+      "group": "crm",
+      "name": "Salesforce",
+      "level": "medium",
+      "approval": "admin",
+      "access": "REST, Bulk and SOAP APIs through an External Client App, with OAuth 2.0 and an API-only integration user. New connected apps can’t be created by default since Spring ’26.",
+      "sandbox": "Developer sandboxes on most paid editions. Full and Partial Copy sandboxes depend on edition and add-ons. Confirm when a Full sandbox was last refreshed; refreshes are limited.",
+      "limits": "Org-wide daily API request limit set by edition and licenses, pooled with every other integration in the org. Professional Edition needs API access added.",
+      "blockers": [
+        "A Salesforce admin must install the External Client App and create the integration user. Since September 2025, users can’t authorize uninstalled connected apps without a specific permission.",
+        "The Integration User license starts with no object access, and a field without field-level security is silently missing from results, with no error.",
+        "Validation rules, flows and Apex triggers run on API writes and can reject or change them.",
+        "Security teams look hard at OAuth apps since stolen Salesloft Drift tokens were used to export Salesforce data in August 2025."
+      ],
+      "request": "An External Client App installed by the admin, an API-only integration user with a permission set for the exact objects and fields, and a sandbox refreshed with recent data.",
+      "check": "Writes pass the org’s validation rules and don’t fire unexpected flows.",
+      "risk": {
+        "id": "sf-automation",
+        "title": "Salesforce automation changes the agent’s writes",
+        "detail": "Flows and triggers in the customer’s org can reject, rewrite or fan out a record the agent creates.",
+        "mitigation": "Replay writes in a sandbox with the org’s automation turned on, and list every flow that fires.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "hubspot",
+      "group": "crm",
+      "name": "HubSpot",
+      "level": "low",
+      "approval": "admin",
+      "access": "REST APIs through an app on HubSpot’s current developer platform: a static token for one account, or OAuth for an app installed in many accounts. New legacy public apps can’t be created since June 23, 2026.",
+      "sandbox": "Free developer test accounts. Standard sandbox accounts on Enterprise tiers.",
+      "limits": "Burst (per 10 seconds) and daily request limits that depend on the customer’s subscription. Marketplace OAuth apps get a lower burst limit than private apps.",
+      "blockers": [
+        "A super admin must install the app or approve the OAuth scopes. Static-token apps on the new platform install in one account only.",
+        "Custom properties, pipelines and stages are different in every portal.",
+        "Workflows can trigger on properties the agent sets.",
+        "Workflow webhooks don’t retry on 4xx responses, so an event that fails validation is lost."
+      ],
+      "request": "An app scoped to the objects the workflow touches, built on the current app platform, plus a list of required properties.",
+      "check": "Records land in the right pipeline and stage with every required property set.",
+      "risk": {
+        "id": "hs-properties",
+        "title": "HubSpot properties don’t match the agent’s fields",
+        "detail": "Custom properties and pipeline stages are named differently in every portal, so writes land in the wrong place or fail.",
+        "mitigation": "Map every field from the customer’s portal before replay and fail closed on unknown properties.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "dynamics",
+      "group": "crm",
+      "name": "Microsoft Dynamics 365",
+      "level": "medium",
+      "approval": "review",
+      "access": "Dataverse Web API (OData) through a Microsoft Entra ID app registration and an application user with a security role.",
+      "sandbox": "Sandbox environments in the Power Platform admin center, subject to the tenant’s storage capacity.",
+      "limits": "Service protection limits per user: 6,000 requests and 20 minutes of execution time per 5 minutes, and 52 concurrent requests. Throttled calls return 429 with Retry-After.",
+      "blockers": [
+        "A tenant admin must register the app and grant consent; IT security usually reviews it.",
+        "Plug-ins and Power Automate flows run on create and update.",
+        "Security roles must be scoped per business unit."
+      ],
+      "request": "An app registration, an application user with a custom least-privilege security role, and a sandbox environment.",
+      "check": "Writes succeed under the application user’s security role without broad privileges.",
+      "risk": {
+        "id": "dyn-consent",
+        "title": "Microsoft tenant consent waits on IT review",
+        "detail": "App registrations and admin consent in a Microsoft tenant usually go through the customer’s IT security process.",
+        "mitigation": "Send the permission list and data flow on day 1 so the review starts before integration work.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "gcal",
+      "group": "scheduling",
+      "name": "Google Calendar",
+      "level": "low",
+      "approval": "admin",
+      "access": "Google Calendar API with OAuth, or a service account with domain-wide delegation granted by a Workspace admin.",
+      "sandbox": "No sandbox. Use test calendars or a separate Workspace for replay.",
+      "limits": "Per-project and per-user quotas; bursts of writes can be rate limited.",
+      "blockers": [
+        "Workspace admins often restrict third-party app access and must allow the app.",
+        "Resource calendars, shared calendars and time zones vary by team."
+      ],
+      "request": "Admin approval for the app (or domain-wide delegation scoped to calendar), and the list of calendars in scope.",
+      "check": "Events land on the right calendar in the right time zone, with no overlaps.",
+      "risk": {
+        "id": "gcal-rules",
+        "title": "Calendar free/busy doesn’t encode booking rules",
+        "detail": "An open slot on a calendar doesn’t say which appointment types, buffers or providers are allowed in it.",
+        "mitigation": "Write the booking rules as config and replay against past bookings that staff moved or refused.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "outlook",
+      "group": "scheduling",
+      "name": "Microsoft 365 / Outlook calendar",
+      "level": "low",
+      "approval": "review",
+      "access": "Microsoft Graph calendar APIs through an Entra ID app registration; application permissions need admin consent.",
+      "sandbox": "No sandbox in the customer tenant. Use test mailboxes for replay.",
+      "limits": "Graph throttling per app and per mailbox.",
+      "blockers": [
+        "Admin consent for application permissions usually needs IT security review.",
+        "Access should be scoped to specific mailboxes with an Exchange application access policy or RBAC for applications."
+      ],
+      "request": "Admin consent for calendar permissions, scoped to the mailboxes the agent books into.",
+      "check": "The app can only read and write the mailboxes in scope.",
+      "risk": {
+        "id": "outlook-scope",
+        "title": "Graph permissions reach every mailbox by default",
+        "detail": "Application calendar permissions apply tenant-wide unless the admin restricts them, which security teams push back on.",
+        "mitigation": "Propose the mailbox restriction in the access request instead of waiting for security to ask.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "calendly",
+      "group": "scheduling",
+      "name": "Calendly",
+      "level": "low",
+      "approval": "admin",
+      "access": "Calendly API v2 with a personal access token or OAuth; webhooks for booking events.",
+      "sandbox": "No sandbox. Use a separate Calendly account or test event types.",
+      "limits": "API and webhook availability depend on the customer’s plan.",
+      "blockers": [
+        "Confirm the plan and API version let you book directly; otherwise the agent sends a scheduling link.",
+        "Routing forms and round-robin rules live in Calendly, not in the API caller."
+      ],
+      "request": "An API token or OAuth approval from the account owner, and the event types in scope.",
+      "check": "The agent books or links the correct event type and respects routing rules.",
+      "risk": {
+        "id": "calendly-booking",
+        "title": "The agent may only be able to send a link, not book",
+        "detail": "If direct booking isn’t available on the customer’s setup, the call or chat ends with a link instead of a confirmed appointment.",
+        "mitigation": "Confirm the booking path in week 1 and set the success check to match it.",
+        "impact": 2,
+        "likelihood": 1
+      }
+    },
+    {
+      "id": "servicetitan",
+      "group": "scheduling",
+      "name": "ServiceTitan",
+      "level": "high",
+      "approval": "partner",
+      "access": "ServiceTitan APIs through an app in ServiceTitan’s developer portal; the customer’s tenant admin connects the app.",
+      "sandbox": "An integration environment for approved developers, with access gated by tier. No copy of the customer’s tenant.",
+      "limits": "60 calls per second per app per tenant. Reporting endpoints allow only a few runs per minute.",
+      "blockers": [
+        "Distributing an app to customers needs ServiceTitan Partner Program certification. A customer-built integration is an option only on eligible plans (The Works or Enterprise Plus).",
+        "Job types, business units, campaigns and arrival windows are configured per tenant.",
+        "Decide whether the agent creates jobs or creates bookings for a CSR to confirm.",
+        "ServiceTitan’s booking rate is unreliable when calls aren’t classified, so recompute the baseline from raw call and job data."
+      ],
+      "request": "Tenant connection of your certified app (or the customer-built path on an eligible plan), plus the job types, business units and campaigns the agent may use.",
+      "check": "Jobs or bookings carry the correct job type, business unit, campaign and arrival window.",
+      "risk": {
+        "id": "st-approval",
+        "title": "ServiceTitan certification sets the timeline",
+        "detail": "Customers can’t install your app until ServiceTitan certifies it through its Partner Program, and that isn’t in your control.",
+        "mitigation": "Start certification now and ask whether the customer’s plan allows a customer-built integration. If neither is ready, launch with bookings a CSR confirms.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "jobber",
+      "group": "scheduling",
+      "name": "Jobber",
+      "level": "medium",
+      "approval": "partner",
+      "access": "Jobber GraphQL API through an app in the Jobber Developer Center, with OAuth.",
+      "sandbox": "Test with a developer account. No copy of the customer’s account.",
+      "limits": "Query-cost throttling: 10,000 points per app and account, refilled at 500 per second, plus a cap of 2,500 requests per 5 minutes.",
+      "blockers": [
+        "Confirm whether the app needs Jobber’s review before a customer account can connect.",
+        "Services, line items and team assignment rules differ by account."
+      ],
+      "request": "OAuth approval from the account owner, and the services and team members in scope.",
+      "check": "Requests and jobs land with the right client, property, service and assignee.",
+      "risk": {
+        "id": "jobber-cost",
+        "title": "GraphQL query cost throttles busy hours",
+        "detail": "Large queries for clients and visits use up the cost budget, and lookups slow down or fail at peak volume.",
+        "mitigation": "Replay at peak-hour volume and request only the fields the workflow needs.",
+        "impact": 1,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "housecall",
+      "group": "scheduling",
+      "name": "Housecall Pro",
+      "level": "medium",
+      "approval": "admin",
+      "access": "Housecall Pro public API and webhooks with an API key from the customer’s account.",
+      "sandbox": "Confirm with the customer. Plan to test on a separate account.",
+      "limits": "Not in the sources we checked. Confirm with Housecall Pro.",
+      "blockers": [
+        "Confirm the customer’s plan includes API access. Reports say the API and webhooks are only on the MAX plan.",
+        "Confirm the key with the admin. Reports say only admins can create keys, and a key is either read-only or full access, with no finer scopes."
+      ],
+      "request": "The customer’s plan name, an API key from an admin, and the job types and employees in scope.",
+      "check": "Jobs and estimates land with the right customer, address, job type and employee.",
+      "risk": {
+        "id": "hcp-plan",
+        "title": "The customer’s plan may not include the API",
+        "detail": "Reports say Housecall Pro offers API and webhook access only on its top plan, so the customer may need to upgrade before the agent can connect.",
+        "mitigation": "Confirm the plan on the first call. Budget for the upgrade, or start with read-only access.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "epic",
+      "group": "ehr",
+      "name": "Epic",
+      "level": "high",
+      "approval": "partner",
+      "access": "FHIR R4 APIs registered on open.epic; each health system activates the client in its own instance. Many writes go through HL7v2 interfaces instead.",
+      "sandbox": "Public open.epic sandbox with synthetic patients. Testing in a customer environment needs their Epic team.",
+      "limits": "Set per health system. Write APIs such as scheduling are limited and often need customer-side build.",
+      "blockers": [
+        "The health system’s Epic team must activate and approve the app, usually after a security review. Write scopes are approved per organization.",
+        "A BAA is needed with every vendor in the data path.",
+        "Writes depend on each organization’s build. Scheduling needs their visit types and departments, and FHIR writes such as Observation.Create fail without a mapped flowsheet row."
+      ],
+      "request": "App activation in their Epic instance, the FHIR scopes or HL7 interfaces in scope, and a named contact on their Epic team.",
+      "check": "Every read and write lands on the correct patient and department; identity is verified first.",
+      "risk": {
+        "id": "epic-activation",
+        "title": "Epic activation and build queue",
+        "detail": "The health system decides when to activate the app and when their Epic analysts build what the workflow needs.",
+        "mitigation": "Request activation on day 1 and plan a read-only or staff-confirmed launch if writes aren’t ready.",
+        "impact": 3,
+        "likelihood": 3
+      }
+    },
+    {
+      "id": "oracle-health",
+      "group": "ehr",
+      "name": "Oracle Health (Cerner)",
+      "level": "high",
+      "approval": "partner",
+      "access": "Millennium FHIR R4 APIs through Oracle Health’s developer program. Provider and system apps are activated per client organization, after a demo in the sandbox.",
+      "sandbox": "Public sandbox with synthetic data. Customer test domains need their IT team.",
+      "limits": "Write support varies by resource and by client configuration. Creating an Appointment needs a Slot reference, and booking against order-role slots isn’t supported.",
+      "blockers": [
+        "The client organization must activate the app after a sandbox demo and its own review.",
+        "A BAA is needed with every vendor in the data path.",
+        "Confirm each write the workflow needs is supported for this client."
+      ],
+      "request": "App activation in their domain, the resources in scope, and access to a non-production domain.",
+      "check": "Reads and writes match the patient and encounter in the customer’s non-production domain.",
+      "risk": {
+        "id": "oh-writes",
+        "title": "Needed writes may not be available",
+        "detail": "Read access is common; write support for the workflow may be missing or need a separate interface. Appointment booking needs the client’s slot model to match.",
+        "mitigation": "Confirm each write against the client’s configuration before committing to a launch date, and route unsupported appointment types to staff.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "athena",
+      "group": "ehr",
+      "name": "athenahealth",
+      "level": "medium",
+      "approval": "partner",
+      "access": "athenaOne REST and FHIR APIs through the athenahealth Developer Portal; the practice enables access.",
+      "sandbox": "A preview environment with test data for development.",
+      "limits": "Per-app call rate limits. Confirm the preview environment’s limits; reports say they are low, so load tests there may not reflect production.",
+      "blockers": [
+        "Production access goes through athenahealth’s partner approval, then the practice enables it.",
+        "Appointment types, departments and providers are configured per practice.",
+        "A BAA is needed with every vendor in the data path."
+      ],
+      "request": "Practice enablement of your app, the departments and appointment types in scope, and a practice contact.",
+      "check": "Appointments book into open slots of the right type and department.",
+      "risk": {
+        "id": "athena-slots",
+        "title": "Slot types don’t match how staff actually book",
+        "detail": "Staff often override slot types and templates by hand, so replayed bookings fail or land in the wrong slot type.",
+        "mitigation": "Replay against the practice’s own past bookings and write the override rules down with staff.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "ecw",
+      "group": "ehr",
+      "name": "eClinicalWorks",
+      "level": "high",
+      "approval": "partner",
+      "access": "Certified FHIR R4 APIs, mostly read. Writes such as scheduling usually go through eClinicalWorks’ partner program or an HL7 interface the practice orders.",
+      "sandbox": "Limited. Testing usually needs the practice’s test environment or partner access.",
+      "limits": "Interface throughput depends on the practice’s hosting (cloud or on-premises).",
+      "blockers": [
+        "Interfaces can carry a cost and lead time for the practice; confirm both early.",
+        "On-premises installs need network access to the practice’s server.",
+        "A BAA is needed with every vendor in the data path."
+      ],
+      "request": "The interface order or partner access path, the cost owner, and a practice contact.",
+      "check": "Writes arrive through the interface and appear correctly in the practice’s schedule.",
+      "risk": {
+        "id": "ecw-interface",
+        "title": "The write path needs an interface order",
+        "detail": "If writes require an interface the practice must order, cost and vendor timing control the launch.",
+        "mitigation": "Ask the practice who pays and when it can be ordered on day 1; launch read-only if it isn’t ready.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "opendental",
+      "group": "ehr",
+      "name": "Open Dental",
+      "level": "medium",
+      "approval": "review",
+      "access": "Open Dental API with a developer key and a customer key; remote calls go through the office’s eConnector.",
+      "sandbox": "Test against a local Open Dental install with test data.",
+      "limits": "Throughput depends on the office’s eConnector and server.",
+      "blockers": [
+        "The office must enable API access for your developer key; Open Dental charges for API access, so confirm with the office.",
+        "The eConnector must be running on the office’s server."
+      ],
+      "request": "A customer API key from the office, confirmation that the eConnector is running, and the operatories and providers in scope.",
+      "check": "Appointments land in the right operatory and provider column without overlaps.",
+      "risk": {
+        "id": "od-econnector",
+        "title": "The office server is part of the uptime path",
+        "detail": "If the office’s eConnector or server is down, the agent can’t read or book.",
+        "mitigation": "Monitor API reachability and route to the fallback when the office server is offline.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "dentrix",
+      "group": "ehr",
+      "name": "Dentrix",
+      "level": "high",
+      "approval": "partner",
+      "access": "Integration through Henry Schein One’s developer program; Dentrix G-series runs on a server in the practice.",
+      "sandbox": "Partner test setup. No copy of the practice’s database.",
+      "limits": "Bound by the practice server and any on-site connector.",
+      "blockers": [
+        "A partner agreement with Henry Schein One is needed before production access.",
+        "An on-site connector needs install rights and network access at each office."
+      ],
+      "request": "Partner access status, install access at each office, and the practice’s IT contact.",
+      "check": "Appointments match providers, operatories and appointment types at each office.",
+      "risk": {
+        "id": "dentrix-onprem",
+        "title": "On-premises install at every office",
+        "detail": "Each office needs a connector on its own server, so multi-office groups multiply setup and failure points.",
+        "mitigation": "Start with one office, and script the install before rolling to the rest.",
+        "impact": 2,
+        "likelihood": 3
+      }
+    },
+    {
+      "id": "hl7",
+      "group": "ehr",
+      "name": "HL7v2 interface",
+      "level": "high",
+      "approval": "review",
+      "access": "HL7v2 messages from the hospital’s interface engine, such as ADT for patient events and SIU for scheduling.",
+      "sandbox": "A test feed from the hospital’s interface team, if they have one.",
+      "limits": "Message types and volume are set by the hospital’s interface engine and team.",
+      "blockers": [
+        "The hospital must assign an interface analyst before work starts. Confirm the timeline; reports put one new feed at several weeks to over two months once assigned.",
+        "If the engine is Mirth Connect, confirm the version. Mirth became commercial at 4.6 (2025), and security teams may flag an unpatched open-source install.",
+        "A BAA is needed with every vendor in the data path."
+      ],
+      "request": "An interface slot requested at signature, the message types in scope, a named interface analyst, and a test feed.",
+      "check": "Every message is parsed, matched to the right patient, and acknowledged; rejects are logged with the reason.",
+      "risk": {
+        "id": "hl7-queue",
+        "title": "The interface queue sets the date",
+        "detail": "A new feed waits for the hospital’s interface analyst, and that queue isn’t in your control.",
+        "mitigation": "Request the interface slot at signature, and use feeds the hospital already sends where you can.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "oscar",
+      "group": "emr-ca",
+      "name": "OSCAR Pro (WELL)",
+      "level": "high",
+      "approval": "partner",
+      "access": "OSCAR Pro REST API with OAuth 1.0a, plus an older SOAP API. WELL Health must first enable integrations on each clinic’s instance; then the clinic admin creates a REST client and a dedicated EMR user. WELL’s apps.health marketplace lists third-party apps.",
+      "sandbox": "None published. Confirm with WELL.",
+      "limits": "Not published. Confirm with WELL.",
+      "blockers": [
+        "WELL completes setup steps on each clinic’s instance after a request form, and the clinic must be on a minimum OSCAR Pro build.",
+        "Confirm the timeline and fees with WELL. They aren’t published; one integrator says first enablement typically takes one to two weeks.",
+        "WELL hosts the instance and doesn’t publish where. Confirm the hosting location for the privacy review.",
+        "Confirm how the clinic’s eFax reaches the chart; no fax integration is documented for OSCAR Pro."
+      ],
+      "request": "WELL’s enablement request for the clinic, a REST client and dedicated EMR user from the clinic admin, the clinic’s OSCAR Pro build, and the providers and document types in scope.",
+      "check": "Documents and notes file to the right patient chart and provider.",
+      "risk": {
+        "id": "oscar-enable",
+        "title": "WELL enables each clinic before the agent connects",
+        "detail": "Every OSCAR Pro clinic needs WELL to finish setup on its instance before a REST client works, so each new clinic waits on WELL.",
+        "mitigation": "Send WELL’s request form on day 1 with the clinic’s build number, and launch with staff filing the agent’s drafts until it’s done.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "pssuite",
+      "group": "emr-ca",
+      "name": "TELUS PS Suite",
+      "level": "high",
+      "approval": "partner",
+      "access": "TELUS’s mobile API for PS Suite, which isn’t publicly documented. The clinic signs your request form, you send it to TELUS, and TELUS connects the EMR. The clinic admin then enables you under Integration Management, which lists only vendors TELUS has added.",
+      "sandbox": "None published. Confirm with TELUS.",
+      "limits": "Not published. Integrators say some data isn’t reachable through the API and some fields can only be written while a chart is open; confirm the fields you need.",
+      "blockers": [
+        "You need a relationship with TELUS before you appear in the clinic’s Integration Management list. Confirm terms and fees with TELUS.",
+        "Confirm the timing with TELUS; one integrator’s guide says its connection step can take up to 10 business days.",
+        "The clinic must have the TELUS mobile API set up and accept its terms.",
+        "Confirm how the clinic’s eFax reaches the chart; no fax integration is documented for PS Suite."
+      ],
+      "request": "Your TELUS integration status, the clinic’s signed request form, the EMR instance ID and secret from the admin, and the fields the workflow reads and writes.",
+      "check": "Every field the workflow needs can be read or written through the API, and documents file to the right chart.",
+      "risk": {
+        "id": "pss-fields",
+        "title": "Fields the workflow needs may be missing from the TELUS API",
+        "detail": "Integrators say some PS Suite data isn’t reachable through the TELUS API, and some fields can only be written while a chart is open.",
+        "mitigation": "Confirm each field the workflow reads or writes with TELUS in week 1, and route the rest to staff.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "accuro",
+      "group": "emr-ca",
+      "name": "Accuro (QHR)",
+      "level": "medium",
+      "approval": "partner",
+      "access": "Accuro REST API, with an OpenAPI spec published by QHR and OAuth 2.0 scopes such as patient demographics read and clinical notes write. Third parties join QHR’s Marketplace under a vendor agreement; each clinic then requests access and signs a contract with QHR.",
+      "sandbox": "None documented. Confirm with QHR.",
+      "limits": "Not published. Pages return at most 50 records.",
+      "blockers": [
+        "Each clinic signs a contract with QHR before credentials are issued. Confirm the timing; one integrator says QHR can take up to four weeks to process requests.",
+        "Each clinic needs a tenant ID, a database ID and an API user with External REST API turned on.",
+        "Fees aren’t published; each Marketplace vendor handles its own billing.",
+        "Confirm how the clinic’s eFax reaches the chart; no fax integration is documented for Accuro."
+      ],
+      "request": "Your QHR Marketplace agreement, the clinic’s signed QHR contract, its tenant and database IDs, an API user, and the scopes the workflow needs.",
+      "check": "Documents and notes land on the right patient and provider, using only the granted scopes.",
+      "risk": {
+        "id": "accuro-contract",
+        "title": "A QHR contract for every clinic",
+        "detail": "Each Accuro clinic signs its own contract with QHR before credentials arrive, so a multi-clinic rollout repeats the wait.",
+        "mitigation": "Submit every clinic’s request on day 1 and start with the first clinic that signs.",
+        "impact": 2,
+        "likelihood": 3
+      }
+    },
+    {
+      "id": "netsuite",
+      "group": "erp",
+      "name": "NetSuite",
+      "level": "medium",
+      "approval": "review",
+      "access": "SuiteTalk REST and SOAP web services with OAuth 2.0, an integration record and a custom role. New token-based authentication (TBA) integrations can’t be created from release 2027.1.",
+      "sandbox": "Sandbox accounts are a paid add-on; many customers don’t have one.",
+      "limits": "Concurrency limits set by the account’s service tier (5 on Standard, 15 on Premium, 20 on Enterprise and Ultimate, plus 10 per SuiteCloud Plus license), shared with every other integration.",
+      "blockers": [
+        "An administrator must create the integration record, role and OAuth 2.0 credentials.",
+        "Don’t build on TBA: no new TBA integrations from 2027.1, and Oracle plans to retire it after that.",
+        "SuiteScript and workflows run on record save.",
+        "Custom segments and fields differ per account."
+      ],
+      "request": "An integration record, a least-privilege role, OAuth 2.0 client credentials, and a sandbox if one exists.",
+      "check": "Transactions post to the right subsidiary, department and accounting period.",
+      "risk": {
+        "id": "ns-nosandbox",
+        "title": "No NetSuite sandbox to test writes",
+        "detail": "Without a sandbox, the first real write happens in the customer’s production books.",
+        "mitigation": "Run replay with writes recorded but not executed, then approve the first live writes one by one.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "sap",
+      "group": "erp",
+      "name": "SAP S/4HANA",
+      "level": "high",
+      "approval": "review",
+      "access": "OData APIs listed on the SAP Business Accelerator Hub; on-premises systems often route through SAP Gateway or middleware.",
+      "sandbox": "Usually a QA system in the customer’s landscape, owned by their SAP team.",
+      "limits": "Set by the customer’s gateway and middleware; change windows control when config moves.",
+      "blockers": [
+        "The SAP Basis and security teams create communication users and arrangements.",
+        "Config moves to production through transports in scheduled change windows.",
+        "Middleware teams may need to build or approve the route.",
+        "Confirm with the customer’s SAP team that SAP’s 2026 API policy allows a third-party AI agent on this route. An analyst report says it restricts agents outside SAP-endorsed routes from June 9, 2026."
+      ],
+      "request": "A communication user, the APIs in scope, QA system access, the next change window, and their SAP team’s answer on the API policy.",
+      "check": "Documents post in QA with the same org units and number ranges production uses.",
+      "risk": {
+        "id": "sap-change",
+        "title": "SAP change windows set the launch date",
+        "detail": "Production changes in an SAP landscape move in scheduled windows, often weeks apart.",
+        "mitigation": "Get the change calendar on day 1 and plan the launch around it.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "qbo",
+      "group": "erp",
+      "name": "QuickBooks Online",
+      "level": "low",
+      "approval": "admin",
+      "access": "QuickBooks Online Accounting API with OAuth 2.0; the company admin authorizes the app.",
+      "sandbox": "Free sandbox companies through an Intuit developer account.",
+      "limits": "Per-company request limits.",
+      "blockers": [
+        "Your app needs Intuit production keys, which require completing Intuit’s app assessment.",
+        "Chart of accounts, classes and locations differ per company."
+      ],
+      "request": "Admin authorization of the app and the accounts, classes and locations in scope.",
+      "check": "Entries post to the right accounts, classes and customers.",
+      "risk": {
+        "id": "qbo-coa",
+        "title": "Chart of accounts mapping",
+        "detail": "Every company names and nests accounts differently, so a wrong mapping posts real entries to the wrong account.",
+        "mitigation": "Have the customer’s bookkeeper sign off on the mapping before the first live write.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "bc",
+      "group": "erp",
+      "name": "Dynamics 365 Business Central",
+      "level": "medium",
+      "approval": "review",
+      "access": "Business Central REST APIs through a Microsoft Entra ID app registration that a tenant admin consents to.",
+      "sandbox": "Sandbox environments in the Business Central admin center. Confirm how many the customer’s license allows.",
+      "limits": "6,000 requests per 5 minutes per user or app, 5 requests processed at a time with the rest queued, 429 errors past 100 queued connections, and an 8-minute timeout.",
+      "blockers": [
+        "A tenant admin must register the app and grant consent; IT security usually reviews it.",
+        "Dimensions, posting groups and number series differ per company."
+      ],
+      "request": "An app registration with admin consent, permission sets scoped to the workflow, and a sandbox environment.",
+      "check": "Documents post with the right dimensions and posting groups, and no request times out.",
+      "risk": {
+        "id": "bc-limits",
+        "title": "Five requests at a time per app",
+        "detail": "Business Central processes 5 requests at a time per user or app and queues the rest, so bursts of writes back up or fail with 429 errors.",
+        "mitigation": "Queue writes on your side, back off on 429, and keep page sizes small.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "zendesk",
+      "group": "ticketing",
+      "name": "Zendesk",
+      "level": "low",
+      "approval": "admin",
+      "access": "Zendesk REST API with OAuth or an API token.",
+      "sandbox": "Sandbox on Enterprise plans and as an add-on.",
+      "limits": "Per-minute rate limits by plan: 200 on Team, 400 on Growth and Professional, 700 on Enterprise, and 2,500 with the High Volume add-on.",
+      "blockers": [
+        "Triggers and automations fire on API updates and can send emails to customers.",
+        "Groups, custom fields and ticket forms differ per account.",
+        "Webhooks stop delivering to an endpoint that keeps failing, so the agent can miss events until you reconcile."
+      ],
+      "request": "An OAuth client or API token for a dedicated agent seat, and the groups and fields in scope.",
+      "check": "Tickets get the right group, priority and fields, and no unexpected trigger emails go out.",
+      "risk": {
+        "id": "zd-triggers",
+        "title": "Zendesk triggers email customers during tests",
+        "detail": "Updating real tickets during replay or shadow can fire triggers that email end customers.",
+        "mitigation": "Replay in a sandbox, or add a tag that suppresses triggers while testing.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "intercom",
+      "group": "ticketing",
+      "name": "Intercom",
+      "level": "low",
+      "approval": "admin",
+      "access": "Intercom REST API with an access token from a Developer Hub app, or OAuth.",
+      "sandbox": "Development workspaces through the Developer Hub.",
+      "limits": "Private apps share a workspace pool of 25,000 requests per minute (10,000 per app), enforced in 10-second slices.",
+      "blockers": [
+        "If Intercom’s own AI agent is active, decide which agent answers which conversations.",
+        "Teams, tags and assignment rules differ per workspace."
+      ],
+      "request": "An app token for the workspace and the inboxes, teams and tags in scope.",
+      "check": "Conversations reach the right team, and only one agent replies to each.",
+      "risk": {
+        "id": "ic-two-agents",
+        "title": "Two AI agents answer the same conversation",
+        "detail": "If the workspace already runs Intercom’s AI agent, both can reply or hand off to each other.",
+        "mitigation": "Split the inboxes or rules so each conversation has one owner.",
+        "impact": 2,
+        "likelihood": 1
+      }
+    },
+    {
+      "id": "freshdesk",
+      "group": "ticketing",
+      "name": "Freshdesk",
+      "level": "low",
+      "approval": "admin",
+      "access": "Freshdesk REST API with an agent’s API key.",
+      "sandbox": "Sandbox on higher plans.",
+      "limits": "Account-wide per-minute limits by plan (100 on Growth, with 50 for ticket creation; 400 on Pro). Invalid requests count too.",
+      "blockers": [
+        "The API key belongs to an agent, so the integration needs its own agent seat.",
+        "Automations run on ticket updates."
+      ],
+      "request": "A dedicated agent seat for the integration, its API key, and the groups in scope.",
+      "check": "Ticket updates come from the integration seat and land in the right group.",
+      "risk": {
+        "id": "fd-seat",
+        "title": "Actions show up under a person’s name",
+        "detail": "If the integration uses a staff member’s API key, every agent action looks like theirs in the audit trail.",
+        "mitigation": "Use a dedicated integration seat before shadow mode starts.",
+        "impact": 1,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "servicenow",
+      "group": "ticketing",
+      "name": "ServiceNow",
+      "level": "medium",
+      "approval": "review",
+      "access": "ServiceNow REST Table API or Scripted REST APIs, with an integration user and roles.",
+      "sandbox": "Sub-production instances (dev or test) are common.",
+      "limits": "Inbound REST rate limit rules (the strictest matching rule wins) and transaction quotas, set by the customer.",
+      "blockers": [
+        "Changes go through the customer’s change advisory board.",
+        "Business rules and ACLs run on API writes.",
+        "If the customer has turned on AI Control Tower approvals (off by default), an AI steward must approve the agent before it deploys.",
+        "Config moves between instances through update sets. Confirm how test instances are cloned; reports say a clone from production can overwrite the integration’s credentials and endpoints."
+      ],
+      "request": "An integration user with named roles, a test instance, and the date of the next change board.",
+      "check": "Records pass ACLs and business rules in the test instance.",
+      "risk": {
+        "id": "snow-cab",
+        "title": "Change board approval",
+        "detail": "Production changes wait for the customer’s change advisory board meeting.",
+        "mitigation": "Submit the change with replay results attached so it gets approved in one meeting.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "jsm",
+      "group": "ticketing",
+      "name": "Jira Service Management",
+      "level": "low",
+      "approval": "admin",
+      "access": "Jira Cloud and Service Management REST APIs with OAuth 2.0, an API token tied to a user, or an app.",
+      "sandbox": "Sandboxes on Premium and Enterprise plans.",
+      "limits": "Cloud rate limits per app and per user.",
+      "blockers": [
+        "Request types, queues and SLAs are configured per project.",
+        "Automation rules run on issue changes."
+      ],
+      "request": "An app or service account, and the projects, request types and queues in scope.",
+      "check": "Requests get the right type, queue and SLA.",
+      "risk": {
+        "id": "jsm-sla",
+        "title": "SLA timers start on the wrong request type",
+        "detail": "A misclassified request starts the wrong SLA clock and breaches go unnoticed.",
+        "mitigation": "Replay past requests of every type and compare the SLA each one starts.",
+        "impact": 1,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "twilio",
+      "group": "telephony",
+      "name": "Twilio",
+      "level": "low",
+      "approval": "admin",
+      "access": "Programmable Voice and Messaging APIs on your account or a customer subaccount; calls reach the agent by forwarding, porting or SIP.",
+      "sandbox": "Test credentials and separate test numbers.",
+      "limits": "Outbound calls default to 1 call per second per account until you request more, which needs a Business Profile. Messaging throughput depends on registration.",
+      "blockers": [
+        "Porting the customer’s existing numbers can take weeks; forwarding is faster.",
+        "US SMS needs A2P 10DLC brand and campaign registration before sending; vetting can take up to 5 business days.",
+        "Outbound caller ID gets C attestation (STIR/SHAKEN) without a Business Profile, and numbers Twilio doesn’t own get at most B, which leads to spam labels and fewer answers."
+      ],
+      "request": "The numbers in scope, forwarding or SIP details, and the fallback number for transfers.",
+      "check": "Transfers reach the fallback number and caller ID is preserved.",
+      "risk": {
+        "id": "twilio-numbers",
+        "title": "Number porting or SMS registration delays launch",
+        "detail": "Porting numbers and A2P 10DLC registration run on carrier timelines.",
+        "mitigation": "Launch on call forwarding first and register SMS on day 1 if the workflow sends texts.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "five9",
+      "group": "telephony",
+      "name": "Five9",
+      "level": "high",
+      "approval": "review",
+      "access": "Calls reach the agent through IVR script changes or SIP transfers; Five9 APIs cover configuration and statistics.",
+      "sandbox": "Usually none. Test with a dedicated number and IVR branch.",
+      "limits": "Bound by the customer’s Five9 configuration and trunk capacity.",
+      "blockers": [
+        "IVR scripts are changed by the customer’s Five9 admin or Five9 professional services.",
+        "Transfers back to human agents must carry context into the agent desktop.",
+        "Confirm whether the customer has Five9’s AI Agent Connect add-on. Reports say it is paid and off by default, and that VoiceStream is limited to accredited partners."
+      ],
+      "request": "A test number with its own IVR branch, SIP transfer details, and the queue for human fallback.",
+      "check": "Calls route to the agent and back to the right Five9 queue with context attached.",
+      "risk": {
+        "id": "five9-ivr",
+        "title": "IVR changes depend on the customer’s Five9 admin",
+        "detail": "Routing traffic to the agent needs IVR script edits that only their admin or Five9 services can make.",
+        "mitigation": "Write the exact IVR change and test number plan for their admin in week 1.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "genesys",
+      "group": "telephony",
+      "name": "Genesys Cloud CX",
+      "level": "medium",
+      "approval": "review",
+      "access": "Genesys Cloud Platform API with OAuth clients; Architect flows route calls to a bot integration or an external SIP endpoint.",
+      "sandbox": "Usually none. Use a test flow and test number in the org.",
+      "limits": "Per-OAuth-client API rate limits.",
+      "blockers": [
+        "The org admin creates OAuth clients and edits Architect flows.",
+        "Bot integrations and external trunks are set up per org. The Voice Bot Connector needs a subscription change through Genesys sales.",
+        "Transfer context sent as user-to-user information (UUI) is hex-encoded by default, which breaks plain-text payloads. UUI works on BYOC trunks only; keep it to 128 characters."
+      ],
+      "request": "An OAuth client with a scoped role, a test Architect flow, the queue for human fallback, and the UUI encoding the desktop expects.",
+      "check": "Calls route through the test flow and transfer to the right queue with context that decodes correctly.",
+      "risk": {
+        "id": "genesys-flow",
+        "title": "Architect flow changes touch live routing",
+        "detail": "Editing the production call flow to reach the agent can affect every caller if done wrong.",
+        "mitigation": "Use a separate test flow and number, then publish one controlled change to route 10%.",
+        "impact": 3,
+        "likelihood": 1
+      }
+    },
+    {
+      "id": "connect",
+      "group": "telephony",
+      "name": "Amazon Connect",
+      "level": "medium",
+      "approval": "review",
+      "access": "Contact flows invoke the agent through Lambda, Amazon Lex, audio streaming, or transfer to an external number.",
+      "sandbox": "A separate Connect instance, ideally in a test AWS account.",
+      "limits": "Service quotas and API throttling per instance.",
+      "blockers": [
+        "The customer’s AWS team must grant IAM roles and approve cross-account access.",
+        "Contact flows are changed by their Connect admin."
+      ],
+      "request": "Cross-account IAM access, a test instance or flow, and the human queue for fallback.",
+      "check": "The flow reaches the agent and falls back to the queue on any error branch.",
+      "risk": {
+        "id": "connect-iam",
+        "title": "Cross-account AWS access review",
+        "detail": "IAM roles into a customer AWS account are reviewed carefully and often slowly.",
+        "mitigation": "Request a minimal role with an explicit policy document on day 1.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "nice",
+      "group": "telephony",
+      "name": "NICE CXone",
+      "level": "high",
+      "approval": "review",
+      "access": "CXone APIs through the CXone developer portal; Studio scripts route contacts to virtual agents.",
+      "sandbox": "Usually none. Use a test point of contact and script.",
+      "limits": "Bound by the tenant configuration.",
+      "blockers": [
+        "Studio script changes are made by the customer’s CXone admin or NICE services.",
+        "API app registration is done by the tenant admin."
+      ],
+      "request": "A test point of contact, Studio script access or a named admin, and the human fallback skill.",
+      "check": "Contacts route to the agent and back to the right skill with context.",
+      "risk": {
+        "id": "nice-studio",
+        "title": "Studio script changes need the CXone admin",
+        "detail": "Routing to the agent needs script edits that sit in the customer admin’s queue.",
+        "mitigation": "Hand their admin the exact script change and test plan in week 1.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "ringcentral",
+      "group": "telephony",
+      "name": "RingCentral",
+      "level": "medium",
+      "approval": "partner",
+      "access": "RingCentral REST API with JWT or OAuth; apps start in a sandbox and must be graduated to production.",
+      "sandbox": "A developer sandbox account.",
+      "limits": "Rate limit groups per user and app (for example, Heavy at 10 requests per minute), with a 60-second penalty when exceeded.",
+      "blockers": [
+        "App graduation to production is reviewed by RingCentral.",
+        "Call handling rules and queues are set by the account admin."
+      ],
+      "request": "Graduated app credentials, the extensions or queues in scope, and the fallback queue.",
+      "check": "Calls forward to the agent and back to the right queue.",
+      "risk": {
+        "id": "rc-graduation",
+        "title": "App graduation before production",
+        "detail": "The app can’t touch the customer’s production account until RingCentral approves graduation.",
+        "mitigation": "Start graduation as soon as the sandbox build passes, and use forwarding rules meanwhile.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "talkdesk",
+      "group": "telephony",
+      "name": "Talkdesk",
+      "level": "medium",
+      "approval": "review",
+      "access": "Bring your own bot through Talkdesk’s audio-stream protocol or an AI Launchpad connector.",
+      "sandbox": "Confirm with the customer. Use a test number and flow.",
+      "limits": "Set by the customer’s plan and the connector used.",
+      "blockers": [
+        "Talkdesk’s API is limited to partners and Enterprise customers; confirm which path this customer has.",
+        "Flows and fallback queues are changed by the customer’s Talkdesk admin."
+      ],
+      "request": "The connection path (audio stream or a named connector), a test number and flow, and the queue for human fallback.",
+      "check": "Calls reach the agent and transfer back to the right queue with context.",
+      "risk": {
+        "id": "talkdesk-path",
+        "title": "The connection path depends on plan and partner status",
+        "detail": "Without partner or Enterprise API access, the agent connects through the audio stream or a prebuilt connector, which changes what it can read and write.",
+        "mitigation": "Confirm the customer’s plan and connector in week 1, then test transfers back to staff.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "8x8",
+      "group": "telephony",
+      "name": "8x8",
+      "level": "medium",
+      "approval": "review",
+      "access": "Calls reach the agent over SIP from 8x8 Contact Center, through its external IVR forwarding.",
+      "sandbox": "Confirm with the customer. Use a test number and IVR branch.",
+      "limits": "Confirm the cap on concurrent external IVR sessions with the customer’s 8x8 admin.",
+      "blockers": [
+        "Confirm how calls come back to 8x8. Reports say a transfer from the AI agent over the SIP trunk fails, and the call must end to the “Forward to External IVR” resume exit instead.",
+        "IVR and queue changes are made by the customer’s 8x8 admin."
+      ],
+      "request": "A test number with its own IVR branch, the external IVR settings, and the queue for human fallback.",
+      "check": "Calls return to the right 8x8 queue with context, at every hour the agent runs.",
+      "risk": {
+        "id": "8x8-return",
+        "title": "Calls may not transfer back to 8x8 the usual way",
+        "detail": "Reports say a transfer from the agent over 8x8’s SIP trunk fails, so the return path has to be designed and tested on purpose.",
+        "mitigation": "Confirm the return path with the customer’s 8x8 admin in week 1, and test it at every hour the agent runs.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "retell",
+      "group": "telephony",
+      "name": "Retell AI",
+      "level": "medium",
+      "approval": "admin",
+      "access": "Your Retell account. Calls reach the agent on a number bought through Retell, by forwarding, or over SIP from the customer’s phone system.",
+      "sandbox": "Use a separate test agent and test number.",
+      "limits": "20 concurrent calls by default. Past that, inbound callers wait about 40 seconds, then go to the fallback number or drop.",
+      "blockers": [
+        "Peak concurrent calls in the customer’s history can exceed the default limit.",
+        "Without a fallback number set, calls over the limit are dropped."
+      ],
+      "request": "Peak concurrent calls by hour from the customer’s history, a fallback number, and more concurrency if peaks exceed the limit.",
+      "check": "Peak-hour concurrency from history stays under the account limit, and overflow reaches the fallback number.",
+      "risk": {
+        "id": "retell-concurrency",
+        "title": "Calls over the concurrency limit wait, then drop",
+        "detail": "Retell allows 20 concurrent calls by default. Past that, inbound callers wait about 40 seconds, then go to the fallback number, or drop if none is set.",
+        "mitigation": "Compare peak concurrency in call history with the limit, set the fallback number, and buy more concurrency before 50%.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "stripe",
+      "group": "payments",
+      "name": "Stripe",
+      "level": "low",
+      "approval": "admin",
+      "access": "Stripe API with restricted keys, or Stripe Connect if you are the platform.",
+      "sandbox": "Built-in test mode.",
+      "limits": "About 100 requests per second in live mode, lower on some endpoints; concurrent writes to one object can fail with a 429 lock timeout. Use idempotency keys on every write.",
+      "blockers": [
+        "Restricted keys must be created by an account admin with the minimum permissions.",
+        "Card details must never pass through the agent’s transcripts or logs."
+      ],
+      "request": "A restricted key with only the permissions the workflow needs.",
+      "check": "Payment actions are idempotent and no card data appears in transcripts or logs.",
+      "risk": {
+        "id": "stripe-idem",
+        "title": "Retries charge or refund twice",
+        "detail": "A timeout followed by a retry can repeat a charge or refund without idempotency keys, and Stripe can prune a key after 24 hours.",
+        "mitigation": "Use idempotency keys on every write, check your own record before retrying after 24 hours, and replay timeouts on purpose.",
+        "impact": 3,
+        "likelihood": 1
+      }
+    },
+    {
+      "id": "square",
+      "group": "payments",
+      "name": "Square",
+      "level": "low",
+      "approval": "admin",
+      "access": "Square APIs with OAuth for third-party apps, scoped per location.",
+      "sandbox": "Sandbox accounts with test data.",
+      "limits": "Per-application rate limits.",
+      "blockers": [
+        "The seller must authorize the app; locations and catalogs differ per seller.",
+        "Card details must never pass through the agent’s transcripts or logs."
+      ],
+      "request": "Seller OAuth approval with minimum scopes, and the locations in scope.",
+      "check": "Actions apply to the right location and customer.",
+      "risk": {
+        "id": "square-locations",
+        "title": "Wrong location on multi-location sellers",
+        "detail": "Multi-location sellers have separate catalogs and payment settings per location.",
+        "mitigation": "Map each phone number or channel to a location before replay.",
+        "impact": 2,
+        "likelihood": 1
+      }
+    },
+    {
+      "id": "availity",
+      "group": "payments",
+      "name": "Availity (clearinghouse)",
+      "level": "medium",
+      "approval": "partner",
+      "access": "X12 EDI transactions (eligibility 270/271, claim status 276/277) and REST APIs through Availity’s developer portal.",
+      "sandbox": "Demo APIs with canned responses.",
+      "limits": "Payer coverage and response detail vary by payer.",
+      "blockers": [
+        "Production use needs an Availity agreement and the provider organization’s enrollment.",
+        "A BAA is needed with every vendor in the data path."
+      ],
+      "request": "The provider organization’s Availity enrollment, the payers in scope, and credentials for a service account.",
+      "check": "Eligibility and claim status answers match what staff got for the same cases.",
+      "risk": {
+        "id": "availity-payers",
+        "title": "Payer responses differ in detail",
+        "detail": "Some payers return far less detail than others, so answers that work for one payer fail for another.",
+        "mitigation": "Replay cases from each of the top payers by volume and route the rest to staff.",
+        "impact": 2,
+        "likelihood": 3
+      }
+    },
+    {
+      "id": "okta",
+      "group": "identity",
+      "name": "Okta",
+      "level": "medium",
+      "approval": "review",
+      "access": "Okta management APIs through an API service app using OAuth 2.0 client credentials and granted scopes.",
+      "sandbox": "A separate Okta org for testing, if the customer has one.",
+      "limits": "Rate limits per endpoint. Okta says increases for user-write and SCIM traffic are less likely to be approved.",
+      "blockers": [
+        "Okta assigns the Super Admin role to a custom API service app once scopes are granted. Downgrade it to a custom admin role before review.",
+        "A super admin must create the app and grant the scopes."
+      ],
+      "request": "An API service app with only the scopes the workflow needs, downgraded from Super Admin to a custom admin role.",
+      "check": "The service app holds only the custom role and scopes in the request.",
+      "risk": {
+        "id": "okta-superadmin",
+        "title": "The service app starts as Super Admin",
+        "detail": "Okta gives a custom API service app the Super Admin role when scopes are granted, and a security reviewer will flag it.",
+        "mitigation": "Put the downgrade to a custom admin role in the access request, and show the final role in the security review.",
+        "impact": 2,
+        "likelihood": 3
+      }
+    },
+    {
+      "id": "entra",
+      "group": "identity",
+      "name": "Microsoft Entra ID",
+      "level": "medium",
+      "approval": "review",
+      "access": "An app registration in the customer’s Entra tenant; Microsoft Graph application permissions need admin consent.",
+      "sandbox": "No sandbox in the customer tenant. Use test users and mailboxes, or a separate test tenant.",
+      "limits": "Microsoft Graph throttling per app and per tenant.",
+      "blockers": [
+        "Conditional Access for workload identities covers only single-tenant service principals (about $3 per identity per month), so it can’t target a multi-tenant vendor app.",
+        "Application-level Mail.Read reads every mailbox in the tenant. Scope it to named mailboxes with an application access policy, or use delegated permissions.",
+        "Apps from unverified publishers, or that ask for high privileges, go through the admin consent workflow."
+      ],
+      "request": "A single-tenant app registration in their tenant, admin consent for named permissions, and mailbox scoping for any mail permission.",
+      "check": "Each permission the app holds maps to a tool the agent uses, and mail access is limited to named mailboxes.",
+      "risk": {
+        "id": "entra-tenant",
+        "title": "A multi-tenant app sits outside their Conditional Access",
+        "detail": "Conditional Access can’t target a multi-tenant vendor app, so security teams ask for a single-tenant app in their own tenant.",
+        "mitigation": "Offer a single-tenant registration in the customer’s tenant from the start, with the permission list attached.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "yardi",
+      "group": "property",
+      "name": "Yardi (Voyager / Breeze)",
+      "level": "high",
+      "approval": "partner",
+      "access": "Yardi Voyager interfaces, mostly SOAP web services, through Yardi’s Standard Interface Partnership Program (SIPP). Each interface type needs its own Data Exchange Agreement and license. Yardi publishes no Breeze API or partner program; confirm with Yardi what the customer’s Breeze plan allows.",
+      "sandbox": "A development sandbox for SIPP partners. No copy of the customer’s database.",
+      "limits": "Not published. Confirm with Yardi.",
+      "blockers": [
+        "Confirm Yardi’s current partner terms. Its partner pages ask for a company at least 2 years old with at least 3 active Voyager clients, and a pilot client before general release.",
+        "Yardi charges an annual license fee per interface, set by interface type and sometimes per transaction. Confirm the amount and who pays; integrators report about $25,000 per interface per year.",
+        "Confirm with the customer’s Yardi admin which interfaces their license includes, and that they will enable yours."
+      ],
+      "request": "Your SIPP status and interface license, the interface types the workflow needs, the customer’s database and property list, and a named Yardi admin.",
+      "check": "Work orders and resident records land on the right property, unit and resident.",
+      "risk": {
+        "id": "yardi-sipp",
+        "title": "Yardi’s partner program gates access",
+        "detail": "Yardi admits interface partners through SIPP, with minimums, a per-interface fee and a pilot client, so access isn’t in your or the customer’s control.",
+        "mitigation": "Confirm your SIPP status in week 1. If you don’t qualify yet, launch read-only from exports, or with actions staff confirm in Yardi.",
+        "impact": 3,
+        "likelihood": 3
+      }
+    },
+    {
+      "id": "appfolio",
+      "group": "property",
+      "name": "AppFolio",
+      "level": "medium",
+      "approval": "admin",
+      "access": "AppFolio API with a developer ID, client ID and secret that the customer’s admin creates in AppFolio’s Developer Space. Listing in the AppFolio Stack marketplace is a separate partner path.",
+      "sandbox": "A sandbox for Stack partners. Without Stack, test read-only against the customer’s account first.",
+      "limits": "Not published. Confirm with AppFolio.",
+      "blockers": [
+        "API access depends on the customer’s plan: Core lists no API, Plus is read-only, and Max is read and write.",
+        "Stack partners apply, answer a security questionnaire and accept AppFolio’s terms before listing. Confirm the fee and timing; integrators report $25,000–$50,000 a year and 3 months or more to a signed contract."
+      ],
+      "request": "The customer’s AppFolio plan, Developer Space credentials from their admin, and the properties in scope.",
+      "check": "Work orders and tenant records land on the right property and unit.",
+      "risk": {
+        "id": "appfolio-plan",
+        "title": "The customer’s AppFolio plan may be read-only",
+        "detail": "AppFolio’s Plus plan includes a read-only API and only Max allows writes, so the agent may not be able to create work orders.",
+        "mitigation": "Confirm the plan on the first call. Launch read-only with staff creating records, or budget the upgrade to Max.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "vantaca",
+      "group": "property",
+      "name": "Vantaca",
+      "level": "high",
+      "approval": "partner",
+      "access": "Vantaca REST APIs. For the integrations Vantaca documents, its support team creates the API user and allowlists your IP addresses; confirm the same path for yours.",
+      "sandbox": "None documented. Confirm with Vantaca.",
+      "limits": "Not published. Confirm with Vantaca.",
+      "blockers": [
+        "Confirm the authorization step with Vantaca. Reports say the management company must approve your access before support issues credentials.",
+        "Calls must come from allowlisted IP addresses, so the agent needs fixed outbound IPs."
+      ],
+      "request": "Written authorization from the management company to Vantaca, your fixed outbound IPs, and the associations in scope.",
+      "check": "Requests and work orders land on the right association, unit and homeowner.",
+      "risk": {
+        "id": "vantaca-provision",
+        "title": "Vantaca support issues the credentials",
+        "detail": "Access starts with a request to Vantaca support, not a setting the customer can turn on, so the timing isn’t yours.",
+        "mitigation": "Send the authorization and IP list to Vantaca with the customer on day 1, and launch with staff-confirmed actions until access arrives.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "cinc",
+      "group": "property",
+      "name": "CINC Systems",
+      "level": "high",
+      "approval": "partner",
+      "access": "CINC’s Public API for two-way integrations. Access starts with CINC’s integrations team.",
+      "sandbox": "None documented. Confirm with CINC.",
+      "limits": "Not published. Confirm with CINC.",
+      "blockers": [
+        "Confirm how CINC approves vendors. Reports say its partnerships team approves you before issuing a client ID and secret.",
+        "Get the API reference from CINC early; its public documentation doesn’t describe authentication or access."
+      ],
+      "request": "Your approval status with CINC’s integrations team, client credentials, and the associations in scope.",
+      "check": "Requests and work orders land on the right association, unit and homeowner.",
+      "risk": {
+        "id": "cinc-approval",
+        "title": "CINC approval sets the timeline",
+        "detail": "CINC grants API access through its integrations team, and that queue isn’t in your control.",
+        "mitigation": "Contact CINC’s integrations team on day 1 with the customer copied, and launch with staff-confirmed actions until access arrives.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "buildium",
+      "group": "property",
+      "name": "Buildium",
+      "level": "low",
+      "approval": "admin",
+      "access": "Buildium Open API (REST) with a client ID and secret sent as headers. An account admin turns on API access and creates scoped keys.",
+      "sandbox": "An API sandbox environment from Buildium.",
+      "limits": "10 concurrent requests per second. Past that, calls return 429; Buildium suggests retrying after about 200 ms.",
+      "blockers": [
+        "The API needs Buildium’s Premium subscription.",
+        "Keys can be scoped, so ask for only the data the workflow needs."
+      ],
+      "request": "Confirmation of the Premium plan, a scoped API key from an account admin, and the properties in scope.",
+      "check": "Tasks and tenant records land on the right property, unit and tenant.",
+      "risk": {
+        "id": "buildium-plan",
+        "title": "The API needs Buildium Premium",
+        "detail": "Buildium’s API is only on its Premium subscription, so a customer on a lower plan must upgrade before the agent connects.",
+        "mitigation": "Confirm the plan on the first call and budget the upgrade, or start with exports.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "entrata",
+      "group": "property",
+      "name": "Entrata",
+      "level": "high",
+      "approval": "partner",
+      "access": "Entrata API under an agreement between your company and Entrata. Entrata asks partner applicants for a client sponsor: a management company that endorses you.",
+      "sandbox": "Sandbox environments for API partners.",
+      "limits": "Set per customer and per API. Confirm them with Entrata; its 2017 agreement template allowed one call per property per minute per web service, up to 2,500 a day.",
+      "blockers": [
+        "Confirm the current API agreement. Entrata’s 2017 template barred using the API to build a product or service competitive with Entrata, and limited data by developer type.",
+        "Under that template, the customer must license the Entrata products you use and give written consent, and calls come from allowlisted IP addresses."
+      ],
+      "request": "Your Entrata API agreement, a client sponsor, the customer’s written consent, and your fixed outbound IPs.",
+      "check": "Leads, residents and work orders land on the right property and unit.",
+      "risk": {
+        "id": "entrata-agreement",
+        "title": "Entrata’s agreement may limit what you build",
+        "detail": "Entrata grants API access only under an agreement, and its template barred products competitive with Entrata. An AI leasing or resident agent may overlap with Entrata’s own products.",
+        "mitigation": "Get the current agreement and a client sponsor in week 1, and have counsel read the competition clause before you build.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "realpage",
+      "group": "property",
+      "name": "RealPage",
+      "level": "high",
+      "approval": "partner",
+      "access": "RealPage Exchange (RPX): register on RealPage’s developer portal and get certified. SOAP web services with a RealPage-issued API key. RealPage no longer allows non-RPX applications.",
+      "sandbox": "A clone requested through a RealPage support case, available two weeks at a time.",
+      "limits": "Not published. Confirm with RealPage.",
+      "blockers": [
+        "Pick a track: an AppPartner licenses APIs for all clients after a deeper review; for a Registered Vendor, each client licenses APIs on your behalf.",
+        "The client must accept your integration in the Integration Marketplace within 30 days or it is cancelled, and you accept terms for each client.",
+        "Applications without an infosec review in the past year must go through one."
+      ],
+      "request": "Your RPX track and certification status, the customer’s acceptance in the Integration Marketplace, their PMC and site IDs, and a clone for testing.",
+      "check": "Records land on the right site and unit, under the customer’s PMC and site IDs.",
+      "risk": {
+        "id": "rp-certify",
+        "title": "RealPage certification and client acceptance",
+        "detail": "RealPage certifies every vendor app, and the customer must accept it in the Integration Marketplace within 30 days. RealPage says certification time varies by vendor and application.",
+        "mitigation": "Start certification now, and walk the customer through acceptance the day it’s listed.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "greenhouse",
+      "group": "recruiting",
+      "name": "Greenhouse",
+      "level": "medium",
+      "approval": "partner",
+      "access": "Greenhouse Harvest API v3 (REST). Partner apps use OAuth 2.0 authorization code; a customer building for its own account uses client credentials. Greenhouse set August 31, 2026 to remove Harvest v1 and v2 (API keys over Basic auth), so build on v3.",
+      "sandbox": "Partners get a sandbox after signing the partnership agreement. Customer sandboxes are on the Pro tier only, turned on by the account team, with separate credentials.",
+      "limits": "A fixed 30-second window per integration, with token requests limited separately. Greenhouse doesn’t publish the number.",
+      "blockers": [
+        "A partner app needs at least one mutual customer. Greenhouse reviews applications on the first Monday of each month, replies within 7 business days, and reviews the integration before launch.",
+        "List endpoints need a Site Admin as the authorizing user; anything less returns 403.",
+        "Partners must ask Greenhouse Partner Support to change scopes.",
+        "EEOC and demographic endpoints carry sensitive candidate data. Leave them out of scope unless the workflow needs them."
+      ],
+      "request": "OAuth approval from a Site Admin, the scopes the workflow needs, and the jobs and stages in scope.",
+      "check": "Candidates, applications and notes land on the right job and stage, with no duplicate candidates.",
+      "risk": {
+        "id": "gh-partner",
+        "title": "Greenhouse partner review runs monthly",
+        "detail": "Greenhouse reviews partner applications on the first Monday of each month and needs a mutual customer, so a missed cycle adds weeks.",
+        "mitigation": "Apply before the next first Monday with this customer as the mutual customer, and launch read-only or with staff confirming until approval.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "lever",
+      "group": "recruiting",
+      "name": "Lever",
+      "level": "medium",
+      "approval": "partner",
+      "access": "Lever REST API. Partner integrations must use OAuth 2.0; Lever gives partners no API keys. A customer-made API key over Basic auth is the legacy path and needs the customer’s Data API feature.",
+      "sandbox": "A partner sandbox API and an integrator sandbox account.",
+      "limits": "10 requests per second per key, with bursts to 20, and 429 past that. Lever says these defaults aren’t guaranteed.",
+      "blockers": [
+        "Production credentials come after Lever’s review: a help-center article, two review logins and a QA walkthrough.",
+        "Only a Super Admin can authorize the app.",
+        "Access to confidential postings and requisitions is granted when the credential is created and can’t be added later.",
+        "EEO responses have their own scopes, and the Candidates endpoints are deprecated in favor of Opportunities."
+      ],
+      "request": "OAuth approval from a Super Admin, the scopes the workflow needs (including confidential data, if any), and the postings and stages in scope.",
+      "check": "Opportunities, notes and stage changes land on the right posting, with no duplicate contacts.",
+      "risk": {
+        "id": "lever-confidential",
+        "title": "Confidential roles stay hidden from the agent",
+        "detail": "Lever grants access to confidential postings only when the credential is created, so if it’s missed, those roles stay hidden until a new credential is issued.",
+        "mitigation": "Ask whether any roles in scope are confidential before the Super Admin authorizes, and include a confidential posting in replay.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "workday",
+      "group": "recruiting",
+      "name": "Workday Recruiting",
+      "level": "high",
+      "approval": "review",
+      "access": "The customer’s admin creates an Integration System User (ISU) and registers an API client in their own tenant. Recruiting runs on SOAP web services (Get_Candidates, Put_Candidate, Get_Job_Requisitions and more); REST uses OAuth 2.0 with the ISU’s refresh token. Workday also documents agent-to-agent (A2A) and MCP connections for external agents.",
+      "sandbox": "Customer sandbox tenants. Confirm the refresh schedule with the customer; reports say they refresh weekly from production.",
+      "limits": "Per-endpoint caps aren’t published. Under load, REST returns 429 and SOAP returns 500, and Workday may throttle or suspend access past its limits.",
+      "blockers": [
+        "The ISU needs domain security policies in an integration system security group, and the policy change must be activated.",
+        "Registering the API client needs a security administrator.",
+        "Some Recruiting operations have preconditions; for example, a new job requisition needs a position with no open requisition.",
+        "Workday’s partner program is optional and paid. Confirm the price with Workday; one integration guide puts it at $15,000 a year."
+      ],
+      "request": "An ISU with only the Recruiting domains the workflow needs, a registered API client, a sandbox tenant, and a named Workday security admin.",
+      "check": "Candidates and job applications land on the right requisition and stage in the sandbox tenant.",
+      "risk": {
+        "id": "workday-security",
+        "title": "Workday security setup waits on the customer’s admin",
+        "detail": "Every permission the agent needs is a domain security policy that the customer’s Workday security admin must grant and activate.",
+        "mitigation": "Send the exact domains and operations with the access request on day 1, and test them in the sandbox tenant before production.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "ashby",
+      "group": "recruiting",
+      "name": "Ashby",
+      "level": "low",
+      "approval": "admin",
+      "access": "Ashby API (RPC-style POST calls with JSON). An organization admin creates an API key, used as the Basic auth username, and can tag it to an integration partner.",
+      "sandbox": "Not documented. Confirm with Ashby.",
+      "limits": "1,000 requests per minute per API key.",
+      "blockers": [
+        "New keys start with no permissions. Each module needs read or write granted, or calls fail with missing_endpoint_permission.",
+        "Errors come back as HTTP 200 with success set to false, so check the body, not the status code.",
+        "Confidential jobs, private fields and acting on behalf of a user each need their own toggle."
+      ],
+      "request": "An API key from an organization admin with only the modules the workflow needs, and the jobs and stages in scope.",
+      "check": "Every response has success set to true, and candidates land on the right job and stage.",
+      "risk": {
+        "id": "ashby-errors",
+        "title": "Failed Ashby calls look like successes",
+        "detail": "Ashby returns HTTP 200 with success set to false on errors, so a client that checks only status codes misses failed writes.",
+        "mitigation": "Check the success field on every response, and replay calls with a missing permission on purpose.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "dayforce",
+      "group": "recruiting",
+      "name": "Dayforce",
+      "level": "high",
+      "approval": "review",
+      "access": "Dayforce REST web services. The customer creates a dedicated web services user whose role has the Web Services feature with Read Data, plus Post or Patch to write. Recruiting endpoints cover job postings, candidate sourcing and assessments.",
+      "sandbox": "The customer’s Dayforce test environment. Confirm whether Dayforce gives partners a developer sandbox; none is documented.",
+      "limits": "Set per client and per operation, and shared by every app. Dayforce’s one published example is 10 per second or 100 per minute for employee HR details.",
+      "blockers": [
+        "Tokens come from the web services user’s username and password, last an hour and can’t be revoked. Plan how to cut access quickly if a credential leaks.",
+        "Call the client metadata endpoint at least daily to find the right service URL.",
+        "Field-level access for web services is set separately from the role.",
+        "Sourcing candidates from outside job boards depends on a Recruiting client setting. Confirm it is on."
+      ],
+      "request": "A dedicated web services user with a least-privilege role and field access, the test environment, and the requisitions in scope.",
+      "check": "Candidates and applications land on the right requisition in the test environment, and no extra fields are readable.",
+      "risk": {
+        "id": "dayforce-creds",
+        "title": "A password login into the payroll system",
+        "detail": "Dayforce web services sign in as a user in the customer’s HCM and payroll system, and its tokens can’t be revoked, so security reviewers look hard at it.",
+        "mitigation": "Ask for a dedicated user with the narrowest role and field access, keep the password in the customer’s vault, and agree on a rotation drill.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "shopify",
+      "group": "commerce",
+      "name": "Shopify",
+      "level": "medium",
+      "approval": "admin",
+      "access": "Shopify Admin API (GraphQL) through an app built in Shopify’s Dev Dashboard. Custom distribution installs on one store, or one Plus organization, without Shopify approval. Public distribution installs on many stores and needs Shopify’s review.",
+      "sandbox": "Development stores. Apps installed only on development stores need no data review.",
+      "limits": "Query cost limits by plan: 100 points per second on Standard, 200 on Advanced, 1,000 on Plus and 2,000 on Commerce Components. One query can’t cost more than 1,000 points.",
+      "blockers": [
+        "Since January 1, 2026, merchants can’t create new custom apps in the Shopify admin. Build in the Dev Dashboard; existing admin-created apps keep working.",
+        "Public apps must request protected customer data access. Without approval, name, email, phone and address come back empty.",
+        "Confirm the review timeline. Shopify publishes none, and developers report waits of about 30 days in 2026.",
+        "The distribution method can’t be changed after you choose it."
+      ],
+      "request": "Install approval from the store owner, the scopes the workflow needs, and approval for each protected customer field if the app is public.",
+      "check": "Orders and customers match the store’s records, with no empty customer fields.",
+      "risk": {
+        "id": "shopify-pcd",
+        "title": "Customer names, emails and phones come back empty",
+        "detail": "A public Shopify app gets protected customer fields only after Shopify approves each one. Until then the agent can’t see who it is calling or emailing.",
+        "mitigation": "Request each protected field on day 1, or use custom distribution for a single store while the review runs.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "gorgias",
+      "group": "commerce",
+      "name": "Gorgias",
+      "level": "low",
+      "approval": "admin",
+      "access": "Gorgias REST API. A private integration uses an API key the customer’s admin creates, with HTTP Basic auth (account email and key). A public app uses OAuth 2.0, with access tokens that expire after 24 hours.",
+      "sandbox": "A trial account that Gorgias converts to a sandbox through its developer portal.",
+      "limits": "Leaky bucket: 80 requests per 20 seconds for OAuth apps and 40 for API keys, over 10 seconds on Enterprise. Calls past the limit return 429 with Retry-After.",
+      "blockers": [
+        "A public OAuth app reaches customers only after Gorgias reviews it for the App Store.",
+        "An API key works with a user’s email, so use a dedicated integration user and its key.",
+        "If Gorgias’s own AI Agent or rules already answer tickets, decide which agent owns which tickets."
+      ],
+      "request": "An API key for a dedicated integration user (or OAuth install of your approved app), and the views, tags and rules in scope.",
+      "check": "Tickets get the right tags and assignee, and only one agent replies to each.",
+      "risk": {
+        "id": "gorgias-rules",
+        "title": "Gorgias rules and the agent act on the same tickets",
+        "detail": "Rules and Gorgias’s AI Agent can tag, reply to or close a ticket the agent is working on.",
+        "mitigation": "List the rules that fire on the agent’s tickets, and split views or tags so each ticket has one owner.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "klaviyo",
+      "group": "commerce",
+      "name": "Klaviyo",
+      "level": "low",
+      "approval": "admin",
+      "access": "Klaviyo APIs with a private API key (full, read-only or custom scopes) or an OAuth app. Only Owner, Admin or Manager roles can create either.",
+      "sandbox": "A test account converted from a regular account; it can’t be converted back without support, and usage is still billed.",
+      "limits": "Burst and steady limits by endpoint tier, from 1 per second and 15 per minute (XS) to 350 per second and 3,500 per minute (XL). Private keys share one quota per account; OAuth apps get their own.",
+      "blockers": [
+        "Private key scopes can’t be edited. To change them, delete the key and create a new one.",
+        "SMS needs explicit consent and a sending number. Implied consent doesn’t count, and double opt-in is the default.",
+        "A Marketplace listing needs OAuth, at least 5 active customer installs and Klaviyo’s review; an unlisted app installs by URL."
+      ],
+      "request": "A custom-scope private key (or OAuth install) from an Owner, Admin or Manager, and the lists, segments and flows in scope.",
+      "check": "Profiles and events land with the right consent status, and opt-outs sync back.",
+      "risk": {
+        "id": "klaviyo-consent",
+        "title": "Consent and opt-outs drift from Klaviyo",
+        "detail": "Klaviyo holds email and SMS consent. If the agent contacts people from another list, it can reach someone who unsubscribed in Klaviyo.",
+        "mitigation": "Read consent from Klaviyo before every outbound contact, and write opt-outs back right away.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "applied-epic",
+      "group": "insurance",
+      "name": "Applied Epic",
+      "level": "high",
+      "approval": "partner",
+      "access": "Applied Epic REST APIs through the Applied Dev Center. You build with test credentials, then request production access with the agency’s enterprise ID and Epic database name. The Epic SDK is the older route.",
+      "sandbox": "Test credentials from the Applied Dev Center. No copy of the agency’s database.",
+      "limits": "Not published. Confirm with Applied.",
+      "blockers": [
+        "Applied approves each production app request before it issues credentials.",
+        "Applied says the agency needs an SDK-API license and a utility license. Confirm the cost and who pays.",
+        "Applied launched a Vendor Certification Program in August 2026. Confirm with Applied whether certification removes the agency’s license purchase; certified vendors say it does."
+      ],
+      "request": "Your production app request with the agency’s enterprise ID and database name, the agency’s API license status, and the policy and client objects in scope.",
+      "check": "Activities and policy updates land on the right client, policy and line of business.",
+      "risk": {
+        "id": "applied-approval",
+        "title": "Applied approves production access per agency",
+        "detail": "Production credentials for each agency come only after Applied approves your request, and the agency may need to buy an API license first.",
+        "mitigation": "Submit the production request and confirm the agency’s license on day 1. Launch read-only, or with staff confirming in Epic, until it’s approved.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "ams360",
+      "group": "insurance",
+      "name": "Vertafore AMS360",
+      "level": "medium",
+      "approval": "admin",
+      "access": "AMS360 Web Service API (SOAP). The agency admin creates a web service login and picks a data-security mode. Vertafore lists the API at no extra charge; its Orange Partner Program is a separate path.",
+      "sandbox": "None documented for agencies. Confirm with Vertafore; reports say Orange partners get a test instance.",
+      "limits": "Not published. Five failed logins lock the API login for 20 minutes.",
+      "blockers": [
+        "Secured customers stay hidden from the API user until the agency calls Vertafore to turn on access for that API.",
+        "Confirm with Vertafore whether you must buy the Web Service SDK. Its help page says vendors writing programs need it.",
+        "A bad credential rollout trips the lockout and stops every call for 20 minutes."
+      ],
+      "request": "A dedicated web service login with the narrowest data-security mode, Vertafore access to secured customers if needed, and the customer and policy records in scope.",
+      "check": "Lookups return the same clients and policies staff see, including secured customers.",
+      "risk": {
+        "id": "ams-secured",
+        "title": "Secured customers are invisible to the API",
+        "detail": "AMS360 hides secured customers from an API user until the agency asks Vertafore to open access, so lookups for those clients come back empty.",
+        "mitigation": "Ask the agency which customers are secured and request access from Vertafore on day 1. Replay lookups for secured clients.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "desktop",
+      "group": "legacy",
+      "name": "Desktop or on-premises app (no API)",
+      "level": "high",
+      "approval": "review",
+      "access": "Screen automation on a dedicated machine or VM, or read access to the app’s database if the vendor allows it.",
+      "sandbox": "Rarely. Ask for a training or test copy of the app.",
+      "limits": "Bound by how fast the UI responds; one session per machine.",
+      "blockers": [
+        "Needs a dedicated machine, remote access, and its own login with MFA handled.",
+        "Any UI update can break the automation.",
+        "The vendor’s terms may restrict automation or database access."
+      ],
+      "request": "A dedicated machine or VM, a service login, and notice of the vendor’s update schedule.",
+      "check": "Every step confirms the screen it expects before it types or clicks.",
+      "risk": {
+        "id": "desktop-ui",
+        "title": "A vendor update breaks screen automation",
+        "detail": "UI changes in the legacy app silently break the steps the agent relies on.",
+        "mitigation": "Check each screen before acting, alert on mismatch, and fall back to staff.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "sftp",
+      "group": "legacy",
+      "name": "SFTP or CSV exports",
+      "level": "medium",
+      "approval": "admin",
+      "access": "Scheduled file drops over SFTP, or exports someone runs by hand.",
+      "sandbox": "Sample files from the customer.",
+      "limits": "Data is only as fresh as the last export.",
+      "blockers": [
+        "Column names and formats change without notice.",
+        "Someone must own the export schedule."
+      ],
+      "request": "SFTP credentials, three recent sample files, and the export schedule and owner.",
+      "check": "Each file is validated against the expected columns before anything is loaded.",
+      "risk": {
+        "id": "sftp-stale",
+        "title": "The agent acts on stale data",
+        "detail": "Between exports, the agent can tell people things that are no longer true.",
+        "mitigation": "Show data age in the agent’s context and avoid promises that depend on fresh data.",
+        "impact": 2,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "portal",
+      "group": "legacy",
+      "name": "Payer, carrier or vendor web portal",
+      "level": "high",
+      "approval": "review",
+      "access": "Browser automation against a web portal under the customer’s credentials.",
+      "sandbox": "None. Dry-run each step against real pages without submitting.",
+      "limits": "Session timeouts, CAPTCHAs and account lockouts.",
+      "blockers": [
+        "MFA on the portal login must be handled with the customer.",
+        "The portal’s terms may prohibit automation. Some insurance carriers’ terms ban bots and AI tools without written permission.",
+        "Portal layouts change without notice."
+      ],
+      "request": "A dedicated portal login, the MFA method, and confirmation that automation is allowed.",
+      "check": "Each portal step verifies the page before it reads or submits.",
+      "risk": {
+        "id": "portal-lockout",
+        "title": "Portal locks the account or changes layout",
+        "detail": "Automated logins can trigger lockouts, and layout changes break steps without warning.",
+        "mitigation": "Use a dedicated login, slow the request rate, and fall back to staff on any mismatch.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    },
+    {
+      "id": "fax",
+      "group": "legacy",
+      "name": "Fax or email intake",
+      "level": "medium",
+      "approval": "admin",
+      "access": "An e-fax service’s API or a shared mailbox; documents need OCR and extraction.",
+      "sandbox": "A sample set of past documents.",
+      "limits": "Extraction quality depends on scan quality and handwriting.",
+      "blockers": [
+        "Documents often contain PHI or PII; storage and retention need agreement.",
+        "Forms vary by sender."
+      ],
+      "request": "Access to the fax service or mailbox and a few hundred past documents with their final outcome.",
+      "check": "Extracted fields match what staff entered for the same documents.",
+      "risk": {
+        "id": "fax-extract",
+        "title": "Extraction errors on poor scans",
+        "detail": "Handwritten or low-quality documents produce confident but wrong fields.",
+        "mitigation": "Send low-confidence fields to staff review instead of writing them.",
+        "impact": 2,
+        "likelihood": 3
+      }
+    },
+    {
+      "id": "custom",
+      "group": "legacy",
+      "name": "Custom in-house system",
+      "level": "high",
+      "approval": "review",
+      "access": "Whatever the customer’s engineers expose: an internal API, a database view, or a new endpoint they build.",
+      "sandbox": "Depends on the customer’s engineering team.",
+      "limits": "Unknown until their team documents them.",
+      "blockers": [
+        "The customer’s engineers must prioritize the work.",
+        "Documentation is often missing or out of date."
+      ],
+      "request": "A named engineer on their side, API docs or a schema, and a test environment.",
+      "check": "Every call is checked against the customer engineer’s documented contract.",
+      "risk": {
+        "id": "custom-priority",
+        "title": "Their engineers have other priorities",
+        "detail": "If the customer must build or change an endpoint, your launch waits on their roadmap.",
+        "mitigation": "Agree on the exact endpoint and a date in week 1, or design around a read-only path.",
+        "impact": 3,
+        "likelihood": 2
+      }
+    }
+  ],
+  "agents": [
+    {
+      "id": "voice",
+      "label": "Voice",
+      "units": "calls",
+      "history": "past call recordings and transcripts"
+    },
+    {
+      "id": "chat",
+      "label": "Chat / support",
+      "units": "conversations",
+      "history": "past chat transcripts and tickets"
+    },
+    {
+      "id": "backoffice",
+      "label": "Back-office / ops",
+      "units": "work items",
+      "history": "completed work items (tickets, forms, records) with their final outcome"
+    },
+    {
+      "id": "other",
+      "label": "Other",
+      "units": "interactions",
+      "history": "past interactions with their final outcome"
+    }
+  ],
+  "fallbacks": [
+    {
+      "id": "human",
+      "label": "Human team",
+      "route": "the customer’s human team",
+      "killSwitch": "Set agent traffic to 0%. New {units} go to the customer’s human team.",
+      "handoff": "Warm handoff to the human team with a summary of what the agent already collected.",
+      "risks": [
+        {
+          "id": "fb-human",
+          "title": "The human team isn’t ready for handoffs",
+          "detail": "Staff who weren’t briefed get transfers with no context or at hours nobody covers.",
+          "mitigation": "Brief the team before shadow mode and test handoffs at every covered hour.",
+          "impact": 2,
+          "likelihood": 2
+        }
+      ]
+    },
+    {
+      "id": "voicemail",
+      "label": "Voicemail",
+      "route": "voicemail with a callback queue",
+      "killSwitch": "Set agent traffic to 0%. New {units} go to voicemail and a named owner works the callback queue.",
+      "handoff": "Send the person to voicemail or a message form, and log a callback task with the agent’s summary.",
+      "risks": [
+        {
+          "id": "fb-voicemail",
+          "title": "Failures turn into a callback backlog",
+          "detail": "When the agent hands off to voicemail, every failure becomes a callback someone has to make.",
+          "mitigation": "Name a callback owner and a same-day target before the 10% stage.",
+          "impact": 2,
+          "likelihood": 2
+        }
+      ]
+    },
+    {
+      "id": "none",
+      "label": "None",
+      "route": "a fallback that must be set up first",
+      "killSwitch": "Set agent traffic to 0%. Until a fallback exists, new {units} have nowhere to go.",
+      "handoff": "Set up a fallback before any live traffic: a staffed queue, an on-call person or a callback list.",
+      "risks": [
+        {
+          "id": "fb-none",
+          "title": "The kill switch has nowhere to send people",
+          "detail": "With no fallback today, stopping the agent means dropping {units}.",
+          "mitigation": "Set up a staffed queue or callback list before the 10% stage. Don’t start live traffic without it.",
+          "impact": 3,
+          "likelihood": 3
+        }
+      ]
+    }
+  ],
+  "timeline": {
+    "leadDays": {
+      "admin": 3,
+      "review": 10,
+      "partner": 21
+    },
+    "approvalLabels": {
+      "admin": "Customer admin can grant",
+      "review": "Customer IT or security review",
+      "partner": "Vendor approval, then customer enablement"
+    },
+    "replayDays": 4,
+    "verifyDays": 1,
+    "shadowDays": 3,
+    "hold10Days": 3,
+    "hold50Days": 4,
+    "paper": "Name an owner on each side for the security review and the DPA, and for every BAA if health data is in scope."
+  },
+  "rollout": {
+    "stages": [
+      {
+        "id": "shadow",
+        "label": "Shadow",
+        "traffic": "0%",
+        "what": "The agent sees real {units} and drafts its actions. Nothing is written and nobody hears from it. Staff compare its drafts with what they did.",
+        "exit": "Agreed checks pass on shadow traffic and staff sign off on the failures."
+      },
+      {
+        "id": "p10",
+        "label": "10%",
+        "traffic": "10%",
+        "what": "One in ten {units} goes to the agent. The rest follow today’s route.",
+        "exit": "No unsafe writes, escalations within the agreed range, and every failure reviewed."
+      },
+      {
+        "id": "p50",
+        "label": "50%",
+        "traffic": "50%",
+        "what": "Half of {units} go to the agent, including peak hours.",
+        "exit": "The same checks hold at peak volume and the fallback team keeps up."
+      },
+      {
+        "id": "p100",
+        "label": "100%",
+        "traffic": "100%",
+        "what": "All {units} go to the agent. The fallback and kill switch stay in place.",
+        "exit": "Replay checks rerun whenever a connected system changes.",
+        "exitLabel": "After launch"
+      }
+    ],
+    "triggers": [
+      "Any write to the wrong record or account.",
+      "Escalation or error rate above the threshold agreed with the customer.",
+      "A connected system starts failing or changes its fields.",
+      "Customer staff report a problem they can’t work around."
+    ]
+  },
+  "sampling": {
+    "perCase": 20,
+    "holdoutShare": "1 in 5",
+    "window": "90 days"
+  }
+}

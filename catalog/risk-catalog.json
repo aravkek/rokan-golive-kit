@@ -1,0 +1,1311 @@
+[
+  {
+    "id": "R001",
+    "system": "Salesforce",
+    "category": "CRM",
+    "risk": "Connected app blocked: since Sep 2025 users can't authorize uninstalled connected apps without 'Approve Uninstalled Connected Apps'; since Spring '26 new connected apps can't be created by default",
+    "likelihood": "high",
+    "typical_delay": "1-3 wk",
+    "mitigation": "Use External Client App + admin pre-install; put exact steps in access ticket",
+    "can_automate": "partly",
+    "source": "https://developer.salesforce.com/docs/platform/sfdx-dev/guide/sfdx-dev-auth-connected-app.html",
+    "applies_to": [
+      "salesforce"
+    ]
+  },
+  {
+    "id": "R002",
+    "system": "Salesforce",
+    "category": "CRM",
+    "risk": "Agent consumes org-wide daily API quota (EE: 100k + 1k per license, pooled, rolling 24h), breaking customer's other integrations",
+    "likelihood": "med",
+    "typical_delay": "days after go-live",
+    "mitigation": "Quota model from history volume; cache reads; Bulk/CDC for sync; throttle at 20% of pool",
+    "can_automate": "yes",
+    "source": "https://developer.salesforce.com/docs/platform/salesforce-app-limits-cheatsheet/guide/salesforce-app-limits-platform-api.html",
+    "applies_to": [
+      "salesforce"
+    ]
+  },
+  {
+    "id": "R003",
+    "system": "Salesforce",
+    "category": "CRM",
+    "risk": "Integration User license grants zero object access; missing field-level security makes data silently absent (no error)",
+    "likelihood": "high",
+    "typical_delay": "2-5 d",
+    "mitigation": "Generate permission set from tool manifest; read-back test per field",
+    "can_automate": "yes",
+    "source": "https://help.salesforce.com/s/articleView?id=platform.integration_user.htm",
+    "applies_to": [
+      "salesforce"
+    ]
+  },
+  {
+    "id": "R004",
+    "system": "Salesforce",
+    "category": "CRM",
+    "risk": "Full sandbox refresh only every 29 days (Partial 5, Dev 1); test data stale or unavailable",
+    "likelihood": "med",
+    "typical_delay": "1-4 wk",
+    "mitigation": "Use Partial/Dev sandbox + as-of twin from export",
+    "can_automate": "partly",
+    "source": "https://www.xappex.com/blog/salesforce-sandbox-refresh/ [weak]",
+    "applies_to": [
+      "salesforce"
+    ]
+  },
+  {
+    "id": "R005",
+    "system": "Salesforce",
+    "category": "CRM",
+    "risk": "Shield probabilistic encryption blocks WHERE/filter on encrypted fields (e.g. phone), breaking caller lookup",
+    "likelihood": "low",
+    "typical_delay": "1-2 wk",
+    "mitigation": "Detect encrypted fields at connect; use deterministic encryption or alternate key",
+    "can_automate": "yes",
+    "source": "https://avochato.helpkit.so/avochato-for-salesforce/nYpS6QPSPKHegHsY43McTE/salesforce-platform-encryption-support--considerations/78Bh8fnjUNaMBaqwfxgShM [weak]",
+    "applies_to": [
+      "salesforce"
+    ]
+  },
+  {
+    "id": "R006",
+    "system": "Salesforce",
+    "category": "CRM",
+    "risk": "Validation rules/required fields/flows reject agent writes that pass in UI",
+    "likelihood": "high",
+    "typical_delay": "2-7 d",
+    "mitigation": "Describe metadata; dry-run writes in sandbox; read-after-write",
+    "can_automate": "yes",
+    "source": "https://developer.salesforce.com/docs/atlas.en-us.api.meta/api/ [general]",
+    "applies_to": [
+      "salesforce"
+    ]
+  },
+  {
+    "id": "R007",
+    "system": "Salesforce",
+    "category": "CRM/Security",
+    "risk": "Security team blocks OAuth after Salesloft Drift token theft (Aug 2025, 700+ orgs reported)",
+    "likelihood": "high",
+    "typical_delay": "1-4 wk",
+    "mitigation": "Short-lived scoped tokens in customer vault; IP restriction; revoke-all runbook in security packet",
+    "can_automate": "partly",
+    "source": "https://cloud.google.com/blog/topics/threat-intelligence/data-theft-salesforce-instances-via-salesloft-drift",
+    "applies_to": [
+      "salesforce"
+    ]
+  },
+  {
+    "id": "R008",
+    "system": "Salesforce",
+    "category": "CRM",
+    "risk": "CDC/platform events retained only 72h; missed events unrecoverable after outage",
+    "likelihood": "low",
+    "typical_delay": "hours",
+    "mitigation": "Track replay IDs; reconcile job",
+    "can_automate": "yes",
+    "source": "https://developer.salesforce.com/docs/platform/api-streaming/guide/using-streaming-api-durability.html",
+    "applies_to": [
+      "salesforce"
+    ]
+  },
+  {
+    "id": "R009",
+    "system": "Salesforce Agentforce",
+    "category": "CRM/agent",
+    "risk": "Prompt injection via Web-to-Lead exfiltrates CRM data to expired allowlisted domain (ForcedLeak, CVSS 9.4)",
+    "likelihood": "med",
+    "typical_delay": "incident",
+    "mitigation": "Daily check allowlisted domains still owned; strip outbound links",
+    "can_automate": "yes",
+    "source": "https://thehackernews.com/2025/09/salesforce-patches-critical-forcedleak.html",
+    "applies_to": [
+      "salesforce"
+    ]
+  },
+  {
+    "id": "R010",
+    "system": "HubSpot",
+    "category": "CRM",
+    "risk": "Rate limit: private app 190/10s, marketplace OAuth app 110/10s per account; daily 625k-1M; 429s under burst",
+    "likelihood": "med",
+    "typical_delay": "days",
+    "mitigation": "Batch APIs; backoff on 429; budget per account",
+    "can_automate": "yes",
+    "source": "https://developers.hubspot.com/docs/developer-tooling/platform/usage-guidelines",
+    "applies_to": [
+      "hubspot"
+    ]
+  },
+  {
+    "id": "R011",
+    "system": "HubSpot",
+    "category": "CRM",
+    "risk": "Legacy public apps can't be created after Jun 23 2026; new static-auth private apps install in one account only; manual migration",
+    "likelihood": "med",
+    "typical_delay": "1-2 wk",
+    "mitigation": "Build on new app platform; drift-watch platform deprecations",
+    "can_automate": "partly",
+    "source": "https://developers.hubspot.com/docs/apps/legacy-apps/overview",
+    "applies_to": [
+      "hubspot"
+    ]
+  },
+  {
+    "id": "R012",
+    "system": "HubSpot",
+    "category": "CRM",
+    "risk": "Workflow webhooks don't retry on 4xx; events lost on validation error",
+    "likelihood": "low",
+    "typical_delay": "hours",
+    "mitigation": "Return 2xx then process async; reconcile",
+    "can_automate": "yes",
+    "source": "https://developers.hubspot.com/docs/api-reference/error-handling",
+    "applies_to": [
+      "hubspot"
+    ]
+  },
+  {
+    "id": "R013",
+    "system": "Dynamics 365 / Dataverse",
+    "category": "CRM",
+    "risk": "Service protection: 6,000 req / 5 min / user, 1,200 s exec time, 52 concurrent; 429 with Retry-After",
+    "likelihood": "med",
+    "typical_delay": "days",
+    "mitigation": "Honor Retry-After; spread across app users; batch",
+    "can_automate": "yes",
+    "source": "https://learn.microsoft.com/power-apps/developer/data-platform/api-limits",
+    "applies_to": [
+      "dynamics"
+    ]
+  },
+  {
+    "id": "R014",
+    "system": "Dynamics 365 / Dataverse",
+    "category": "CRM/Identity",
+    "risk": "Application user requires Entra app registration + admin consent + security role assignment by customer admin",
+    "likelihood": "high",
+    "typical_delay": "1-3 wk",
+    "mitigation": "Pre-written consent request with exact role privileges",
+    "can_automate": "partly",
+    "source": "https://learn.microsoft.com/power-apps/developer/data-platform/build-web-applications-server-server-s2s-authentication",
+    "applies_to": [
+      "dynamics"
+    ]
+  },
+  {
+    "id": "R015",
+    "system": "Epic",
+    "category": "EHR",
+    "risk": "Third-party integration lead time 2-14 months (up to 18); customer review longer than build",
+    "likelihood": "high",
+    "typical_delay": "2-14 mo",
+    "mitigation": "Start with read-only FHIR via open.epic; scheduling via existing customer interfaces; begin Vendor Services ($1,900/yr) early",
+    "can_automate": "partly",
+    "source": "https://nirmitee.io/blog/how-long-does-epic-integration-take/ [weak]; https://open.epic.com/EpicSupport",
+    "applies_to": [
+      "epic"
+    ]
+  },
+  {
+    "id": "R016",
+    "system": "Epic",
+    "category": "EHR",
+    "risk": "FHIR write behavior depends on each customer's build (e.g. Observation.Create fails without LOINC-mapped flowsheet row); write scopes approved per org",
+    "likelihood": "high",
+    "typical_delay": "2-8 wk",
+    "mitigation": "Per-customer write capability probe in test env; fall back to task/in-basket message for human",
+    "can_automate": "partly",
+    "source": "https://fhir.epic.com/Specifications; https://docs.nexla.com/user-guides/connectors/epic_ehr/epic_ehr_destination [weak]",
+    "applies_to": [
+      "epic"
+    ]
+  },
+  {
+    "id": "R017",
+    "system": "Epic",
+    "category": "EHR/identity",
+    "risk": "Wrong-patient match from caller ID/name/DOB (duplicates, shared phones) = privacy incident",
+    "likelihood": "med",
+    "typical_delay": "incident",
+    "mitigation": "Require 2+ identifiers; match-rate report on history; ambiguous -> human",
+    "can_automate": "yes",
+    "source": "HIPAA practice [general]",
+    "applies_to": [
+      "epic"
+    ]
+  },
+  {
+    "id": "R018",
+    "system": "Oracle Health (Cerner)",
+    "category": "EHR",
+    "risk": "Provider/system apps activated per customer after sandbox demo; consumer apps auto-provisioned only",
+    "likelihood": "high",
+    "typical_delay": "1-6 mo",
+    "mitigation": "Line up customer sponsor early; build on Millennium sandbox",
+    "can_automate": "partly",
+    "source": "https://docs.oracle.com/en/industries/health/millennium-platform-apis/mfacc/index.html",
+    "applies_to": [
+      "oracle-health"
+    ]
+  },
+  {
+    "id": "R019",
+    "system": "Oracle Health (Cerner)",
+    "category": "EHR",
+    "risk": "FHIR Appointment create needs Slot reference; booking against order-role slots unsupported",
+    "likelihood": "med",
+    "typical_delay": "1-3 wk",
+    "mitigation": "Detect slot model at connect; route unsupported types to staff",
+    "can_automate": "yes",
+    "source": "https://docs.oracle.com/en/industries/health/millennium-platform-apis/mfrap/op-appointment-post.html",
+    "applies_to": [
+      "oracle-health"
+    ]
+  },
+  {
+    "id": "R020",
+    "system": "Oracle Health (Cerner)",
+    "category": "EHR",
+    "risk": "Optional partner fees (OPN $500/yr, Millennium Environment Access $5,000/yr)",
+    "likelihood": "low",
+    "typical_delay": "weeks",
+    "mitigation": "Budget in deal; customer-sponsored access",
+    "can_automate": "no",
+    "source": "https://docs.oracle.com/en/industries/health/millennium-platform-apis/mfacc/index.html",
+    "applies_to": [
+      "oracle-health"
+    ]
+  },
+  {
+    "id": "R021",
+    "system": "athenahealth",
+    "category": "EHR",
+    "risk": "Production needs Marketplace partner approval + security review + per-practice authorization; fees/rev share unpublished",
+    "likelihood": "high",
+    "typical_delay": "1-3 mo",
+    "mitigation": "Start partner process before first deal; reuse security packet",
+    "can_automate": "partly",
+    "source": "https://arkenea.com/blog/athena-emr-ehr-integration/ [weak]",
+    "applies_to": [
+      "athena"
+    ]
+  },
+  {
+    "id": "R022",
+    "system": "athenahealth",
+    "category": "EHR",
+    "risk": "Low preview/sandbox rate limits (5-20 calls/s; token 5/min) make load tests unrepresentative",
+    "likelihood": "med",
+    "typical_delay": "days",
+    "mitigation": "Load-test against twin; cache tokens",
+    "can_automate": "yes",
+    "source": "https://raw.githubusercontent.com/api-evangelist/athenahealth/refs/heads/main/rate-limits/athenahealth-rate-limits.yml [weak]",
+    "applies_to": [
+      "athena"
+    ]
+  },
+  {
+    "id": "R023",
+    "system": "eClinicalWorks",
+    "category": "EHR",
+    "risk": "Two portals (healow patient vs provider/backend JWKS); limited write APIs; partner terms undocumented",
+    "likelihood": "med",
+    "typical_delay": "2-8 wk",
+    "mitigation": "Confirm needed write endpoints in week 0; plan human task fallback",
+    "can_automate": "partly",
+    "source": "https://nango.dev/docs/api-integrations/eclinicalworks/how-to-register-your-own-eclinicalworks-app.md [weak]",
+    "applies_to": [
+      "ecw"
+    ]
+  },
+  {
+    "id": "R024",
+    "system": "HL7v2 / interface engine",
+    "category": "EHR",
+    "risk": "Single ADT/SIU feed takes weeks to 8-10 weeks once hospital assigns interface analyst",
+    "likelihood": "high",
+    "typical_delay": "3-10 wk",
+    "mitigation": "Request interface slot at signature; consume existing feeds",
+    "can_automate": "partly",
+    "source": "https://vital.io/help/en/articles/15863147-hl7v2-integration-guide [weak]",
+    "applies_to": [
+      "hl7"
+    ]
+  },
+  {
+    "id": "R025",
+    "system": "Mirth Connect",
+    "category": "EHR",
+    "risk": "Mirth went commercial/closed-source at 4.6 (2025); 4.5.2 unpatched - customer security may block",
+    "likelihood": "low",
+    "typical_delay": "weeks",
+    "mitigation": "Check engine version; avoid requiring new Mirth deploy",
+    "can_automate": "yes",
+    "source": "https://www.nextgen.com/blog/industry-news/a-new-era-for-mirth-connect-by-nextgen-healthcare",
+    "applies_to": [
+      "hl7"
+    ]
+  },
+  {
+    "id": "R026",
+    "system": "Healthcare (CA)",
+    "category": "Compliance",
+    "risk": "AB 3030: genAI patient clinical comms need AI disclaimer at start and end of audio + how to reach a human (unless provider-reviewed)",
+    "likelihood": "high",
+    "typical_delay": "1-2 wk",
+    "mitigation": "Disclosure lint per jurisdiction; detect clinical drift mid-call",
+    "can_automate": "yes",
+    "source": "https://www.afslaw.com/perspectives/alerts/california-requires-disclaimers-health-care-providers-ai-generated-patient",
+    "applies_to": [
+      "scope:health"
+    ]
+  },
+  {
+    "id": "R027",
+    "system": "Healthcare",
+    "category": "Compliance",
+    "risk": "BAA missing for one hop (LLM, STT, TTS, telephony, eval, logging) blocks PHI go-live",
+    "likelihood": "high",
+    "typical_delay": "2-6 wk",
+    "mitigation": "BAA chain check from dependency graph",
+    "can_automate": "yes",
+    "source": "HHS 45 CFR 164.502(e) [general]",
+    "applies_to": [
+      "scope:health"
+    ]
+  },
+  {
+    "id": "R028",
+    "system": "NetSuite",
+    "category": "ERP",
+    "risk": "Concurrency cap (Standard 5, Premium 15, Enterprise/Ultimate 20, +10 per SuiteCloud Plus) shared with all integrations",
+    "likelihood": "high",
+    "typical_delay": "days",
+    "mitigation": "Concurrency budget; queue writes; ask for SuiteCloud Plus",
+    "can_automate": "yes",
+    "source": "https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/bridgehead_1500275603.html",
+    "applies_to": [
+      "netsuite"
+    ]
+  },
+  {
+    "id": "R029",
+    "system": "NetSuite",
+    "category": "ERP",
+    "risk": "Token-based auth end-of-life: no new TBA integrations from 2027.1; TBA stops ~2028.2",
+    "likelihood": "high",
+    "typical_delay": "rebuild",
+    "mitigation": "Use OAuth 2.0 client credentials now; drift-watch",
+    "can_automate": "yes",
+    "source": "https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_0525020842.html",
+    "applies_to": [
+      "netsuite"
+    ]
+  },
+  {
+    "id": "R030",
+    "system": "NetSuite",
+    "category": "ERP",
+    "risk": "Sandbox sold separately; refresh ~2 days; must activate within 14 days",
+    "likelihood": "med",
+    "typical_delay": "1-3 wk",
+    "mitigation": "Twin from saved-search export when no sandbox",
+    "can_automate": "partly",
+    "source": "https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/chapter_4714508173.html",
+    "applies_to": [
+      "netsuite"
+    ]
+  },
+  {
+    "id": "R031",
+    "system": "SAP S/4HANA",
+    "category": "ERP",
+    "risk": "SAP API Policy 2026 restricts third-party AI agents calling SAP APIs outside endorsed routes and large-scale extraction; enforcement from Jun 9 2026; contract breach risk",
+    "likelihood": "high",
+    "typical_delay": "months / blocker",
+    "mitigation": "Use SAP-sanctioned routes (Integration Suite MCP gateway, Joule A2A); legal review before build",
+    "can_automate": "partly",
+    "source": "https://www.forrester.com/blogs/sap-is-attempting-to-become-the-gatekeeper-of-enterprise-ai-cios-should-push-back/ [analyst]",
+    "applies_to": [
+      "sap"
+    ]
+  },
+  {
+    "id": "R032",
+    "system": "Dynamics 365 Business Central",
+    "category": "ERP",
+    "risk": "6,000 req/5 min per user/SP, 5 concurrent (rest queued), 100 connections then 429, 8-min timeout",
+    "likelihood": "med",
+    "typical_delay": "days",
+    "mitigation": "Queue + backoff; page size limits",
+    "can_automate": "yes",
+    "source": "https://learn.microsoft.com/training/modules/work-with-api/4-limits",
+    "applies_to": [
+      "bc"
+    ]
+  },
+  {
+    "id": "R033",
+    "system": "Zendesk",
+    "category": "Ticketing",
+    "risk": "API rate limit by plan (Team 200, Growth/Pro 400, Enterprise 700 rpm; 2,500 with High Volume add-on)",
+    "likelihood": "med",
+    "typical_delay": "days",
+    "mitigation": "Budget per plan; recommend add-on; incremental exports",
+    "can_automate": "yes",
+    "source": "https://developer.zendesk.com/api-reference/introduction/rate-limits/",
+    "applies_to": [
+      "zendesk"
+    ]
+  },
+  {
+    "id": "R034",
+    "system": "Zendesk",
+    "category": "Ticketing",
+    "risk": "Webhook circuit breaker stops delivery to failing endpoint; agent misses events",
+    "likelihood": "low",
+    "typical_delay": "hours",
+    "mitigation": "Health-check endpoint; reconcile via incremental API",
+    "can_automate": "yes",
+    "source": "https://developer.zendesk.com/api-reference/webhooks/introduction/",
+    "applies_to": [
+      "zendesk"
+    ]
+  },
+  {
+    "id": "R035",
+    "system": "Zendesk AI Agents",
+    "category": "Ticketing/agent",
+    "risk": "Platform-side DB lock caused bots to repeat messages after human reply (Jul 2026)",
+    "likelihood": "low",
+    "typical_delay": "incident",
+    "mitigation": "Detect bot-after-human messages; auto-pause",
+    "can_automate": "yes",
+    "source": "https://support.zendesk.com/hc/en-us/articles/11046894936218",
+    "applies_to": [
+      "zendesk"
+    ]
+  },
+  {
+    "id": "R036",
+    "system": "ServiceNow",
+    "category": "Ticketing",
+    "risk": "Change Advisory Board approval and freeze windows gate go-live and every config change",
+    "likelihood": "high",
+    "typical_delay": "1-3 wk",
+    "mitigation": "Pre-filled change request with rollback plan; customer change windows as constraints",
+    "can_automate": "partly",
+    "source": "[practitioner; no vendor source]",
+    "applies_to": [
+      "servicenow"
+    ]
+  },
+  {
+    "id": "R037",
+    "system": "ServiceNow",
+    "category": "Ticketing",
+    "risk": "Instance clone overwrites sub-prod integration credentials/endpoints and loses in-progress update sets",
+    "likelihood": "med",
+    "typical_delay": "1-5 d",
+    "mitigation": "Data preservers; re-verify connector after clone",
+    "can_automate": "partly",
+    "source": "https://www.servicenow.com/community/upgrades-and-patching-forum/article-servicenow-clone-made-easy-a-practical-step-by-step/td-p/3366634 [weak]",
+    "applies_to": [
+      "servicenow"
+    ]
+  },
+  {
+    "id": "R038",
+    "system": "ServiceNow",
+    "category": "Ticketing",
+    "risk": "Inbound REST rate-limit rules (strictest wins; counts commit every 30s) throttle agent",
+    "likelihood": "low",
+    "typical_delay": "days",
+    "mitigation": "Read X-RateLimit headers; request rule for integration user",
+    "can_automate": "yes",
+    "source": "https://www.servicenow.com/docs/r/yokohama/api-reference/rest-api-explorer/inbound-REST-API-rate-limiting.html",
+    "applies_to": [
+      "servicenow"
+    ]
+  },
+  {
+    "id": "R039",
+    "system": "ServiceNow",
+    "category": "Governance",
+    "risk": "AI Control Tower steward approval can block deployment of AI systems and MCP servers until approved",
+    "likelihood": "med",
+    "typical_delay": "1-4 wk",
+    "mitigation": "Generate steward approval packet (inventory, risk, owner)",
+    "can_automate": "partly",
+    "source": "https://www.servicenow.com/docs/r/intelligent-experiences/ai-control-tower/explore-approvals.html",
+    "applies_to": [
+      "servicenow"
+    ]
+  },
+  {
+    "id": "R040",
+    "system": "ServiceNow",
+    "category": "Ticketing",
+    "risk": "Twice-yearly family upgrades (N/N-1 supported) change APIs/UI under the agent",
+    "likelihood": "med",
+    "typical_delay": "recurring",
+    "mitigation": "Re-run regression on upgrade; drift-watch",
+    "can_automate": "yes",
+    "source": "https://www.servicenow.com/community/now-platform-articles/administration-upgrading-amp-patching-knowledge-amp/ta-p/2366749 [weak]",
+    "applies_to": [
+      "servicenow"
+    ]
+  },
+  {
+    "id": "R041",
+    "system": "Freshdesk",
+    "category": "Ticketing",
+    "risk": "Low per-minute limits (Growth 100, ticket create 50; Pro 400); invalid requests count; account-wide",
+    "likelihood": "med",
+    "typical_delay": "days",
+    "mitigation": "Budget; retry; upgrade plan",
+    "can_automate": "yes",
+    "source": "https://support.freshdesk.com/support/solutions/articles/225439",
+    "applies_to": [
+      "freshdesk"
+    ]
+  },
+  {
+    "id": "R042",
+    "system": "Intercom",
+    "category": "Ticketing",
+    "risk": "All private apps share 25,000/min workspace pool (10k/app) in 10s slices",
+    "likelihood": "low",
+    "typical_delay": "days",
+    "mitigation": "Coordinate with customer's other apps",
+    "can_automate": "yes",
+    "source": "https://developers.intercom.com/docs/references/rest-api/errors/rate-limiting",
+    "applies_to": [
+      "intercom"
+    ]
+  },
+  {
+    "id": "R043",
+    "system": "Intercom Fin / platform evals",
+    "category": "Testing",
+    "risk": "Platform simulations mock connectors and aren't enforced as a gate - integration bugs reach production",
+    "likelihood": "med",
+    "typical_delay": "incident",
+    "mitigation": "Replay with recorded real connector I/O; enforce gate",
+    "can_automate": "yes",
+    "source": "https://fin.ai/help/en/articles/12628771-run-simulations-for-fin-procedures",
+    "applies_to": [
+      "intercom"
+    ]
+  },
+  {
+    "id": "R044",
+    "system": "ServiceTitan",
+    "category": "Field service",
+    "risk": "Partner Program certification required for marketplace distribution; integration env tier-gated; customer must be on The Works/Enterprise Plus for custom builds",
+    "likelihood": "high",
+    "typical_delay": "1-3 mo",
+    "mitigation": "Apply early; customer-built path on eligible tiers",
+    "can_automate": "partly",
+    "source": "https://help.servicetitan.com/commercial/docs/understand-approved-integration-paths-in-servicetitan",
+    "applies_to": [
+      "servicetitan"
+    ]
+  },
+  {
+    "id": "R045",
+    "system": "ServiceTitan",
+    "category": "Field service",
+    "risk": "Certification excludes custom builds on unsupported features (AI CSR vendor had to hold features)",
+    "likelihood": "med",
+    "typical_delay": "months",
+    "mitigation": "Scope to partner-supported APIs only",
+    "can_automate": "partly",
+    "source": "https://usehatchapp.com/blog/how-servicetitans-new-partnership-policy-impacts-hatch [weak]",
+    "applies_to": [
+      "servicetitan"
+    ]
+  },
+  {
+    "id": "R046",
+    "system": "ServiceTitan",
+    "category": "Field service",
+    "risk": "60 calls/s per app per tenant; reports 1-5 runs/min",
+    "likelihood": "low",
+    "typical_delay": "days",
+    "mitigation": "Cache reference data (job types, capacity)",
+    "can_automate": "yes",
+    "source": "https://help.servicetitan.com/docs/default-api-rate-limitsfor-regular-apis-and-reporting-apis",
+    "applies_to": [
+      "servicetitan"
+    ]
+  },
+  {
+    "id": "R047",
+    "system": "ServiceTitan",
+    "category": "Field service",
+    "risk": "Booking-rate metric unreliable when calls unclassified; baseline wrong",
+    "likelihood": "high",
+    "typical_delay": "1-2 wk",
+    "mitigation": "Recompute baseline from raw call + job data",
+    "can_automate": "yes",
+    "source": "https://www.servicetitan.com/blog/data-call-booking-rates",
+    "applies_to": [
+      "servicetitan"
+    ]
+  },
+  {
+    "id": "R048",
+    "system": "Jobber",
+    "category": "Field service",
+    "risk": "GraphQL cost throttle 10,000 pts per app-account, refill 500/s; plus 2,500 req/5 min DDoS guard",
+    "likelihood": "med",
+    "typical_delay": "days",
+    "mitigation": "Query-cost estimator; narrow fields",
+    "can_automate": "yes",
+    "source": "https://developer.getjobber.com/docs/using_jobbers_api/api_rate_limits",
+    "applies_to": [
+      "jobber"
+    ]
+  },
+  {
+    "id": "R049",
+    "system": "Housecall Pro",
+    "category": "Field service",
+    "risk": "Public API/webhooks only on MAX plan; keys read-only or full-access (no scopes); admin-only",
+    "likelihood": "high",
+    "typical_delay": "1-4 wk (plan upgrade)",
+    "mitigation": "Check plan at /plan intake; budget upgrade; browser fallback for reads",
+    "can_automate": "partly",
+    "source": "https://docs.withampersand.com/customer-guides/housecallPro [weak]",
+    "applies_to": [
+      "housecall"
+    ]
+  },
+  {
+    "id": "R050",
+    "system": "Twilio",
+    "category": "Telephony",
+    "risk": "Outbound CPS default 1 per account (Elastic SIP 1 per trunk/region); campaigns throttle",
+    "likelihood": "med",
+    "typical_delay": "1-5 d",
+    "mitigation": "Request CPS increase (needs Business Profile)",
+    "can_automate": "partly",
+    "source": "https://www.twilio.com/docs/glossary/cps",
+    "applies_to": [
+      "twilio"
+    ]
+  },
+  {
+    "id": "R051",
+    "system": "Twilio",
+    "category": "Telephony",
+    "risk": "A2P 10DLC brand/campaign registration for SMS follow-ups: fees + up to 5 business days vetting, appeals",
+    "likelihood": "high",
+    "typical_delay": "1-3 wk",
+    "mitigation": "Register at signature; template copy that passes vetting",
+    "can_automate": "partly",
+    "source": "https://www.twilio.com/docs/trust-hub/registrations/a2p-10dlc-brand",
+    "applies_to": [
+      "twilio"
+    ]
+  },
+  {
+    "id": "R052",
+    "system": "Twilio",
+    "category": "Telephony",
+    "risk": "STIR/SHAKEN: no Business Profile = C attestation; customer's non-Twilio numbers cap at B -> spam labels, low answer rate",
+    "likelihood": "med",
+    "typical_delay": "1-2 wk",
+    "mitigation": "Complete Trust Hub; use owned numbers for outbound",
+    "can_automate": "partly",
+    "source": "https://www.twilio.com/docs/voice/trusted-calling-with-shakenstir/shakenstir-onboarding",
+    "applies_to": [
+      "twilio"
+    ]
+  },
+  {
+    "id": "R053",
+    "system": "Any carrier",
+    "category": "Telephony",
+    "risk": "Number port: FCC simple port 1 business day, non-simple 4; real-world 2 days-3 weeks; LOA/bill mismatch rejects",
+    "likelihood": "high",
+    "typical_delay": "1-3 wk",
+    "mitigation": "Use call forwarding for pilot; port later; LOA pre-check",
+    "can_automate": "partly",
+    "source": "https://docs.fcc.gov/public/attachments/FCC-09-41A1_Rcd.pdf; https://www.twilio.com/en-us/guidelines/us/porting",
+    "applies_to": [
+      "scope:voice"
+    ]
+  },
+  {
+    "id": "R054",
+    "system": "Retell / Vapi",
+    "category": "Telephony/platform",
+    "risk": "Platform concurrency cap (Retell 20 default; inbound waits ~40s then fallback number or drops; Vapi ~10)",
+    "likelihood": "med",
+    "typical_delay": "hours",
+    "mitigation": "Peak concurrency from history vs limit; set fallback number; buy burst",
+    "can_automate": "yes",
+    "source": "https://docs.retellai.com/deploy/concurrency",
+    "applies_to": [
+      "retell"
+    ]
+  },
+  {
+    "id": "R055",
+    "system": "SIP / SBC",
+    "category": "Telephony",
+    "risk": "Codec, TLS/SRTP, IP allowlist and SIP header mismatches appear only on customer's PBX",
+    "likelihood": "high",
+    "typical_delay": "1-3 wk",
+    "mitigation": "SIP OPTIONS/codec probe; test call matrix per trunk",
+    "can_automate": "partly",
+    "source": "https://telnyx.com/resources/deploying-voice-ai-production [vendor]",
+    "applies_to": [
+      "scope:voice"
+    ]
+  },
+  {
+    "id": "R056",
+    "system": "Five9",
+    "category": "CCaaS",
+    "risk": "AI Agent Connect is paid add-on (off by default); context via X- headers on INVITE, result via headers on BYE; VoiceStream limited to accredited partners",
+    "likelihood": "high",
+    "typical_delay": "2-6 wk",
+    "mitigation": "Confirm add-on in week 0; header contract test",
+    "can_automate": "partly",
+    "source": "https://elevenlabs.io/docs/eleven-agents/phone-numbers/c-caa-s-integrations/five9 [weak]",
+    "applies_to": [
+      "five9"
+    ]
+  },
+  {
+    "id": "R057",
+    "system": "Genesys Cloud",
+    "category": "CCaaS",
+    "risk": "UUI on transfer: defaults to Hex encoding (breaks ASCII), duplicates discarded, keep <=128 chars, BYOC only",
+    "likelihood": "med",
+    "typical_delay": "3-10 d",
+    "mitigation": "UUI encoding test in transfer matrix",
+    "can_automate": "yes",
+    "source": "https://help.genesys.cloud/articles/user-to-user-information-uui-overview/",
+    "applies_to": [
+      "genesys"
+    ]
+  },
+  {
+    "id": "R058",
+    "system": "Genesys Cloud",
+    "category": "CCaaS",
+    "risk": "Voice Bot Connector needs subscription change via Sales; Digital Bot Connector max 5 integrations; AudioHook Monitor not PCI-compliant",
+    "likelihood": "med",
+    "typical_delay": "2-6 wk",
+    "mitigation": "Check entitlements at intake",
+    "can_automate": "partly",
+    "source": "https://help.genesys.cloud/articles/configure-the-genesys-digital-bot-connector-integration/",
+    "applies_to": [
+      "genesys"
+    ]
+  },
+  {
+    "id": "R059",
+    "system": "Talkdesk",
+    "category": "CCaaS",
+    "risk": "BYO bot via audio-stream protocol or AI Launchpad connector; API limited to partners/enterprise",
+    "likelihood": "med",
+    "typical_delay": "2-6 wk",
+    "mitigation": "Use prebuilt connector; partner path",
+    "can_automate": "partly",
+    "source": "https://support.talkdesk.com/hc/en-us/articles/34031933617435",
+    "applies_to": [
+      "talkdesk"
+    ]
+  },
+  {
+    "id": "R060",
+    "system": "RingCentral",
+    "category": "CCaaS/UC",
+    "risk": "Per-user per-app rate tiers (Heavy 10/min, Auth 5/min) with 60s penalty",
+    "likelihood": "med",
+    "typical_delay": "days",
+    "mitigation": "Cache; avoid heavy endpoints in call path",
+    "can_automate": "yes",
+    "source": "https://developers.ringcentral.com/guide/basics/rate-limits",
+    "applies_to": [
+      "ringcentral"
+    ]
+  },
+  {
+    "id": "R061",
+    "system": "8x8",
+    "category": "CCaaS",
+    "risk": "AI agent transfer over 8x8 SIP trunk fails; must end call to 'Forward to External IVR' resume exit; max sessions cap",
+    "likelihood": "med",
+    "typical_delay": "1-2 wk",
+    "mitigation": "Use resume-exit pattern; Data Augmentation API for context",
+    "can_automate": "partly",
+    "source": "https://docs.synthflow.ai/sip-with-8x8 [weak]",
+    "applies_to": [
+      "8x8"
+    ]
+  },
+  {
+    "id": "R062",
+    "system": "Telephony (US)",
+    "category": "Compliance",
+    "risk": "Recording without all-party consent (CA, FL, IL, MD, MA, MT, NH, PA, WA...) - strictest state governs interstate calls",
+    "likelihood": "high",
+    "typical_delay": "1-2 wk",
+    "mitigation": "Disclosure + consent at call start for all calls; lint",
+    "can_automate": "yes",
+    "source": "https://www.rev.com/blog/phone-call-recording-laws-state [weak]",
+    "applies_to": [
+      "scope:voice"
+    ]
+  },
+  {
+    "id": "R063",
+    "system": "Telephony (CA)",
+    "category": "Compliance",
+    "risk": "CIPA 'capability' test (Ambriz v. Google, Feb 2025): AI vendor able to use call data may be third-party eavesdropper despite contract",
+    "likelihood": "med",
+    "typical_delay": "litigation",
+    "mitigation": "Disclosure naming AI processing; technical non-use (per-customer keys, no training)",
+    "can_automate": "partly",
+    "source": "https://www.zwillgen.com/?p=24025",
+    "applies_to": [
+      "scope:voice"
+    ]
+  },
+  {
+    "id": "R064",
+    "system": "Telephony (US)",
+    "category": "Compliance",
+    "risk": "Outbound AI voice = 'artificial voice' under TCPA (FCC 24-17): needs prior express consent",
+    "likelihood": "high",
+    "typical_delay": "blocker",
+    "mitigation": "Consent ledger; block dial without logged consent",
+    "can_automate": "yes",
+    "source": "https://www.fcc.gov/document/fcc-makes-ai-generated-voices-robocalls-illegal",
+    "applies_to": [
+      "scope:voice"
+    ]
+  },
+  {
+    "id": "R065",
+    "system": "Any agent (EU)",
+    "category": "Compliance",
+    "risk": "EU AI Act Art. 50(1) chatbot disclosure applies from Aug 2 2026",
+    "likelihood": "high",
+    "typical_delay": "1 wk",
+    "mitigation": "First-turn disclosure test",
+    "can_automate": "yes",
+    "source": "https://jorijn.com/en/blog/eu-ai-act-website-chatbot-disclosure-august-2026/ [secondary]",
+    "applies_to": [
+      "scope:eu"
+    ]
+  },
+  {
+    "id": "R066",
+    "system": "Any agent (EU)",
+    "category": "People",
+    "risk": "Works council co-determination (DE BetrVG 87(1) no.6) for AI in company IT that can monitor staff",
+    "likelihood": "med",
+    "typical_delay": "1-3 mo",
+    "mitigation": "Flag at intake; consultation pack",
+    "can_automate": "no",
+    "source": "https://www.cov.com/-/media/files/corporate/publications/2026/07/works-council-rights-in-ai-implementation-projects.pdf",
+    "applies_to": [
+      "scope:eu"
+    ]
+  },
+  {
+    "id": "R067",
+    "system": "Stripe",
+    "category": "Payments",
+    "risk": "Card numbers spoken into STT/LLM/transcripts pull whole stack into PCI scope; pause-and-resume doesn't descope",
+    "likelihood": "high",
+    "typical_delay": "2-6 wk",
+    "mitigation": "DTMF suppression/tokenized capture; PAN canary on transcripts",
+    "can_automate": "yes",
+    "source": "https://www.paytia.com/pause-and-resume-alternative [vendor]",
+    "applies_to": [
+      "stripe"
+    ]
+  },
+  {
+    "id": "R068",
+    "system": "Stripe",
+    "category": "Payments",
+    "risk": "Idempotency keys prunable after 24h; retry after that creates duplicate charge/refund",
+    "likelihood": "low",
+    "typical_delay": "incident",
+    "mitigation": "Own idempotency ledger; search-before-write",
+    "can_automate": "yes",
+    "source": "https://docs.stripe.com/api/idempotent_requests",
+    "applies_to": [
+      "stripe"
+    ]
+  },
+  {
+    "id": "R069",
+    "system": "Stripe",
+    "category": "Payments",
+    "risk": "Rate limits 100 r/s live, 25/s per endpoint, 1,000 updates/PaymentIntent/hr; lock_timeout 429 on concurrent writes",
+    "likelihood": "low",
+    "typical_delay": "hours",
+    "mitigation": "Serialize writes per object; backoff",
+    "can_automate": "yes",
+    "source": "https://docs.stripe.com/rate-limits",
+    "applies_to": [
+      "stripe"
+    ]
+  },
+  {
+    "id": "R070",
+    "system": "Okta",
+    "category": "Identity",
+    "risk": "Custom API service apps auto-assigned Super Admin when scopes granted - security review red flag",
+    "likelihood": "high",
+    "typical_delay": "1-2 wk",
+    "mitigation": "Ship downgrade-to-custom-role step in access ticket",
+    "can_automate": "partly",
+    "source": "https://developer.okta.com/docs/guides/implement-oauth-for-okta-serviceapp/main/",
+    "applies_to": [
+      "okta"
+    ]
+  },
+  {
+    "id": "R071",
+    "system": "Okta",
+    "category": "Identity",
+    "risk": "SCIM/user write rate-limit increases 'less likely' to be approved",
+    "likelihood": "low",
+    "typical_delay": "weeks",
+    "mitigation": "Batch provisioning; avoid write-heavy flows",
+    "can_automate": "yes",
+    "source": "https://help.okta.com/en-us/Content/Topics/security/api-rate-limits.htm",
+    "applies_to": [
+      "okta"
+    ]
+  },
+  {
+    "id": "R072",
+    "system": "Microsoft Entra ID",
+    "category": "Identity",
+    "risk": "Admin consent workflow required for non-verified/high-privilege apps; app-level Mail.Read = all mailboxes -> security pushback",
+    "likelihood": "high",
+    "typical_delay": "1-3 wk",
+    "mitigation": "Verified publisher; delegated or ApplicationAccessPolicy-scoped permissions; exact justification text",
+    "can_automate": "partly",
+    "source": "https://learn.microsoft.com/entra/identity/enterprise-apps/configure-user-consent",
+    "applies_to": [
+      "entra"
+    ]
+  },
+  {
+    "id": "R073",
+    "system": "Microsoft Entra ID",
+    "category": "Identity",
+    "risk": "Conditional Access for workload identities only covers single-tenant service principals ($3/identity/mo) - multi-tenant vendor app can't be targeted",
+    "likelihood": "med",
+    "typical_delay": "1-2 wk",
+    "mitigation": "Register single-tenant app in customer tenant",
+    "can_automate": "partly",
+    "source": "https://learn.microsoft.com/entra/identity/conditional-access/workload-identity",
+    "applies_to": [
+      "entra"
+    ]
+  },
+  {
+    "id": "R074",
+    "system": "Any system",
+    "category": "Identity",
+    "risk": "Service-account password expiry or OAuth refresh-token expiry silently breaks integration weeks after go-live",
+    "likelihood": "high",
+    "typical_delay": "hours-days (incident)",
+    "mitigation": "Credential expiry tracker; non-expiring integration users (e.g. ServiceNow Internal Integration User); alert",
+    "can_automate": "yes",
+    "source": "https://www.servicenow.com/docs/r/zurich/platform-security/authentication/oauth-inbound.html [weak]",
+    "applies_to": [
+      "scope:all"
+    ]
+  },
+  {
+    "id": "R075",
+    "system": "Legacy / no-API",
+    "category": "Integration",
+    "risk": "UI change breaks RPA/browser automation (main cause of bot failures; maintenance 15-20%/yr)",
+    "likelihood": "high",
+    "typical_delay": "recurring",
+    "mitigation": "Contract test + selector drift heal; read via export/replica where possible",
+    "can_automate": "partly",
+    "source": "https://www.uipath.com/blog/product-and-updates/technical-tuesday-how-healing-agent-solves-ui-automation-challenges [vendor]",
+    "applies_to": [
+      "desktop",
+      "portal",
+      "custom"
+    ]
+  },
+  {
+    "id": "R076",
+    "system": "Legacy / no-API",
+    "category": "Legal",
+    "risk": "Scraping against ToS enforceable in contract (hiQ v. LinkedIn ended in consent judgment)",
+    "likelihood": "med",
+    "typical_delay": "blocker",
+    "mitigation": "Use customer's own credentials with their authorization; prefer sanctioned exports",
+    "can_automate": "partly",
+    "source": "https://www.morganlewis.com/blogs/sourcingatmorganlewis/2022/12/linkedin-v-hiq-landmark-data-scraping-suit-provides-guidance-to-data-scrapers-and-web-operators [dated]",
+    "applies_to": [
+      "desktop",
+      "portal",
+      "custom"
+    ]
+  },
+  {
+    "id": "R077",
+    "system": "Legacy / no-API",
+    "category": "Integration",
+    "risk": "MFA on the legacy UI blocks unattended automation",
+    "likelihood": "high",
+    "typical_delay": "1-3 wk",
+    "mitigation": "Service account MFA exemption with IP restriction, or TOTP in vault; customer sign-off",
+    "can_automate": "partly",
+    "source": "[practitioner estimate]",
+    "applies_to": [
+      "desktop",
+      "portal",
+      "custom"
+    ]
+  },
+  {
+    "id": "R078",
+    "system": "Mainframe / AS400",
+    "category": "Integration",
+    "risk": "5250 screen-scrape fragile and slow; IBM investment fading",
+    "likelihood": "low",
+    "typical_delay": "weeks",
+    "mitigation": "Prefer DB2 replica/ODBC for reads; batch for writes",
+    "can_automate": "partly",
+    "source": "https://www.itjungle.com/2008/07/15/fhs071508-story03/ [dated]",
+    "applies_to": [
+      "desktop",
+      "custom"
+    ]
+  },
+  {
+    "id": "R079",
+    "system": "Any LLM vendor",
+    "category": "Model",
+    "risk": "Vendor model/infra regression (GPT-4o sycophancy rollback; Anthropic 3-bug postmortem) degrades agent without any customer change",
+    "likelihood": "med",
+    "typical_delay": "incident",
+    "mitigation": "Pin snapshots; hourly golden-set canary on live endpoint; second provider",
+    "can_automate": "yes",
+    "source": "https://www.anthropic.com/engineering/a-postmortem-of-three-recent-issues",
+    "applies_to": [
+      "scope:all"
+    ]
+  },
+  {
+    "id": "R080",
+    "system": "Any LLM vendor",
+    "category": "Model",
+    "risk": "Model deprecation forces migration (e.g. OpenAI o4-mini-2025-04-16 shut down 2026-10-23)",
+    "likelihood": "high",
+    "typical_delay": "2-6 mo notice",
+    "mitigation": "Deprecation calendar; re-qualify on golden set before switch",
+    "can_automate": "yes",
+    "source": "https://developers.openai.com/api/docs/deprecations",
+    "applies_to": [
+      "scope:all"
+    ]
+  },
+  {
+    "id": "R081",
+    "system": "Any LLM vendor",
+    "category": "Security/Legal",
+    "risk": "Retention terms change (reported 30-day mandatory retention for top Anthropic models, Jun 2026) invalidating ZDR claims in DPA/questionnaire",
+    "likelihood": "med",
+    "typical_delay": "1-4 wk",
+    "mitigation": "Sub-processor table generated from live terms; alert on change",
+    "can_automate": "partly",
+    "source": "https://the-decoder.com/anthropic-changes-data-retention-policy-after-enterprise-pushback/ [secondary]",
+    "applies_to": [
+      "scope:all"
+    ]
+  },
+  {
+    "id": "R082",
+    "system": "Any LLM vendor",
+    "category": "Availability",
+    "risk": "Upstream outage (OpenAI 4h20m Dec 2024) takes agent down",
+    "likelihood": "med",
+    "typical_delay": "hours",
+    "mitigation": "Circuit breaker; failover provider; fail-open to human routing",
+    "can_automate": "yes",
+    "source": "https://status.openai.com/incidents/ctrsv3lwd797/write-up",
+    "applies_to": [
+      "scope:all"
+    ]
+  },
+  {
+    "id": "R083",
+    "system": "Any agent",
+    "category": "Behavior",
+    "risk": "Ungrounded policy/price claims (Air Canada, NYC MyCity, Cursor) - company liable",
+    "likelihood": "high",
+    "typical_delay": "incident",
+    "mitigation": "KB-grounded claim check; 10x consistency; re-run on KB change",
+    "can_automate": "yes",
+    "source": "https://decisions.civilresolutionbc.ca/crt/crtd/en/525448/1/document.do",
+    "applies_to": [
+      "scope:all"
+    ]
+  },
+  {
+    "id": "R084",
+    "system": "Any agent",
+    "category": "Behavior",
+    "risk": "Commitment-making without authority limits (Chevy $1 Tahoe)",
+    "likelihood": "med",
+    "typical_delay": "incident",
+    "mitigation": "Code-enforced bounds on commit tools; red-team suite",
+    "can_automate": "yes",
+    "source": "https://futurism.com/the-byte/car-dealership-ai [weak]",
+    "applies_to": [
+      "scope:all"
+    ]
+  },
+  {
+    "id": "R085",
+    "system": "Any agent",
+    "category": "Security",
+    "risk": "Lethal trifecta: private data + untrusted input + exfil channel (Supabase MCP, EchoLeak, Slack AI)",
+    "likelihood": "med",
+    "typical_delay": "incident",
+    "mitigation": "Tool-graph lint; canary secrets in untrusted channels; strip links",
+    "can_automate": "yes",
+    "source": "https://simonwillison.net/2025/Jul/6/supabase-mcp-lethal-trifecta",
+    "applies_to": [
+      "scope:all"
+    ]
+  },
+  {
+    "id": "R086",
+    "system": "Any agent",
+    "category": "Behavior",
+    "risk": "Agent fabricates ticket/case/booking IDs instead of escalating (Meta AI support)",
+    "likelihood": "med",
+    "typical_delay": "incident",
+    "mitigation": "Every stated ID must come from tool output and exist in system of record",
+    "can_automate": "yes",
+    "source": "https://cxfoundation.com/news/ai-agent-taken-offline-for-lying-to-a-customer [weak]",
+    "applies_to": [
+      "scope:all"
+    ]
+  },
+  {
+    "id": "R087",
+    "system": "Any agent",
+    "category": "Change mgmt",
+    "risk": "Vendor/persona script change shipped without gate (DPD, NEDA, Woolworths Olive)",
+    "likelihood": "med",
+    "typical_delay": "incident",
+    "mitigation": "Versioned changes; regression gate; customer approval for new generative features",
+    "can_automate": "yes",
+    "source": "https://www.rnz.co.nz/news/world/588177/australian-supermarket-giant-reins-in-ai-assistant-claiming-to-be-human",
+    "applies_to": [
+      "scope:all"
+    ]
+  },
+  {
+    "id": "R088",
+    "system": "Any agent",
+    "category": "People",
+    "risk": "Headcount cut before proof -> quality collapse/reversal (CBA, Klarna)",
+    "likelihood": "med",
+    "typical_delay": "months",
+    "mitigation": "Shadow N weeks; track resolution and repeat-contact, not containment",
+    "can_automate": "partly",
+    "source": "https://finextra.com/newsarticle/46482/commbank-reverses-plan-to-replace-call-centre-staff-with-ai",
+    "applies_to": [
+      "scope:all"
+    ]
+  },
+  {
+    "id": "R089",
+    "system": "Any agent",
+    "category": "Testing",
+    "risk": "Single-run evals overstate reliability (tau-bench: pass^8 ~25% retail for GPT-4o)",
+    "likelihood": "high",
+    "typical_delay": "pre-launch",
+    "mitigation": "pass^k gate (k>=5) on customer's own history",
+    "can_automate": "yes",
+    "source": "https://arxiv.org/pdf/2406.12045",
+    "applies_to": [
+      "scope:all"
+    ]
+  },
+  {
+    "id": "R090",
+    "system": "Any voice agent",
+    "category": "Voice",
+    "risk": "Turn-taking/state loops and prank inputs (Taco Bell 18,000 waters; McDonald's accuracy)",
+    "likelihood": "med",
+    "typical_delay": "incident",
+    "mitigation": "Real-audio noise tests; repetition detector; quantity sanity limits",
+    "can_automate": "yes",
+    "source": "https://www.computing.co.uk/news/2025/ai/taco-bell-scales-back-ai-tests-after-customer-complaints",
+    "applies_to": [
+      "scope:voice"
+    ]
+  },
+  {
+    "id": "R091",
+    "system": "Customer security",
+    "category": "Paper",
+    "risk": "Security questionnaire (SIG Lite ~128, CAIQ v4 261 Qs; SIG has AI domain since 2024) stalls pilot",
+    "likelihood": "high",
+    "typical_delay": "1-6 wk",
+    "mitigation": "Answer library + auto-generated security packet; CSA STAR for AI L1",
+    "can_automate": "partly",
+    "source": "https://prevalent.net/blog/sig-2024; https://www.bitsight.com/glossary/caiq-lite [weak]",
+    "applies_to": [
+      "scope:all"
+    ]
+  },
+  {
+    "id": "R092",
+    "system": "Customer security",
+    "category": "Paper",
+    "risk": "No SOC 2 Type II (Type I 2-4 mo, Type II 6-14 mo)",
+    "likelihood": "high",
+    "typical_delay": "months",
+    "mitigation": "Type I bridge; VPC deployment option; Rokan's own SOC 2 covers deployment layer",
+    "can_automate": "no",
+    "source": "https://www.smartsuite.com/grc-foundation/soc-2-audit-timeline-readiness-observation-window-bridge-letters [weak]",
+    "applies_to": [
+      "scope:all"
+    ]
+  },
+  {
+    "id": "R093",
+    "system": "Customer ops",
+    "category": "Acceptance",
+    "risk": "No written acceptance criteria -> endless pilot (Gartner: 40%+ agentic projects cancelled by 2027 over unclear value)",
+    "likelihood": "high",
+    "typical_delay": "weeks-months",
+    "mitigation": "Gates generated from baseline at signature",
+    "can_automate": "yes",
+    "source": "https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027",
+    "applies_to": [
+      "scope:all"
+    ]
+  }
+]

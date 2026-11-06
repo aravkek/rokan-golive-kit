@@ -1,0 +1,15 @@
+{
+  "name": "rokan-golive",
+  "version": "0.1.0",
+  "description": "Go-live plans for AI agents from a customer's systems list: access requests, risks with sources, replay tests and a staged rollout. Zero dependencies.",
+  "type": "module",
+  "bin": { "rokan-golive": "bin/golive.mjs" },
+  "files": ["bin", "catalog", "checklist.md", "README.md", "LICENSE"],
+  "scripts": {
+    "test": "node --test test/",
+    "build-catalog": "node scripts/build-catalog.mjs"
+  },
+  "engines": { "node": ">=18" },
+  "keywords": ["ai-agents", "voice-agents", "go-live", "deployment", "checklist", "forward-deployed-engineer"],
+  "license": "MIT"
+}
